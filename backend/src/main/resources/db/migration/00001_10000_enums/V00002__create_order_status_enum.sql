@@ -1,0 +1,7 @@
+CREATE TYPE order_status AS ENUM (
+  'PENDING',
+  'PAID',
+  'SHIPPED',
+  'DELIVERED',
+  'CANCELLED'
+);
