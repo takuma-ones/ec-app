@@ -1,21 +1,20 @@
 package com.example.backend.repository.base;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
+
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 
+@NoRepositoryBean
 public interface BaseRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
-    // 論理削除（isDeleted を true に更新）
     void softDeleteById(ID id);
 
-    // 論理削除されていないもののみ取得
     Optional<T> findByIdAndIsDeletedFalse(ID id);
 
-    // 論理削除されていない全てのエンティティを取得
-    java.util.List<T> findAllByIsDeletedFalse();
+    List<T> findAllByIsDeletedFalse();
 
-    // 論理削除されていないIDの存在チェック
     boolean existsByIdAndIsDeletedFalse(ID id);
-
 }

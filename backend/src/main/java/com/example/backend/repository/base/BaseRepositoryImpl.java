@@ -1,13 +1,14 @@
 package com.example.backend.repository.base;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
-
+import jakarta.persistence.EntityManager;
+import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityManager;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Optional;
 
 public class BaseRepositoryImpl<T, ID extends Serializable>
         extends SimpleJpaRepository<T, ID>
@@ -16,40 +17,41 @@ public class BaseRepositoryImpl<T, ID extends Serializable>
     private final EntityManager em;
     private final Class<T> domainClass;
 
-    public BaseRepositoryImpl(Class<T> domainClass, EntityManager em) {
-        super(domainClass, em);
-        this.domainClass = domainClass;
+    // ✅ Spring Data JPA が使うコンストラクタ
+    public BaseRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager em) {
+        super(entityInformation, em);
         this.em = em;
+        this.domainClass = entityInformation.getJavaType();
     }
 
-    // 論理削除（isDeleted を true に更新）
     @Override
     @Transactional
     public void softDeleteById(ID id) {
         T entity = em.find(domainClass, id);
         if (entity != null) {
             try {
-                var field = domainClass.getDeclaredField("isDeleted");
+                Field field = domainClass.getDeclaredField("isDeleted");
                 field.setAccessible(true);
                 field.set(entity, true);
                 em.merge(entity);
+                em.flush();
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException("エンティティに 'isDeleted' フィールドが存在しません", e);
             } catch (Exception e) {
                 throw new RuntimeException("論理削除失敗: " + domainClass.getSimpleName(), e);
             }
         }
     }
 
-    // 論理削除されていない全てのエンティティを取得
     @Override
     public List<T> findAllByIsDeletedFalse() {
-        String jpql = "SELECT e FROM " + domainClass.getSimpleName() + " e WHERE e.isDeleted = false";
+        String jpql = "SELECT e FROM " + domainClass.getName() + " e WHERE e.isDeleted = false";
         return em.createQuery(jpql, domainClass).getResultList();
     }
 
-    // 論理削除されていないエンティティをIDで取得
     @Override
     public Optional<T> findByIdAndIsDeletedFalse(ID id) {
-        String jpql = "SELECT e FROM " + domainClass.getSimpleName() + " e WHERE e.id = :id AND e.isDeleted = false";
+        String jpql = "SELECT e FROM " + domainClass.getName() + " e WHERE e.id = :id AND e.isDeleted = false";
         T result = em.createQuery(jpql, domainClass)
                 .setParameter("id", id)
                 .getResultStream()
@@ -58,10 +60,9 @@ public class BaseRepositoryImpl<T, ID extends Serializable>
         return Optional.ofNullable(result);
     }
 
-    // 論理削除されていないエンティティが存在するか確認
     @Override
     public boolean existsByIdAndIsDeletedFalse(ID id) {
-        String jpql = "SELECT COUNT(e) FROM " + domainClass.getSimpleName() + " e WHERE e.id = :id AND e.isDeleted = false";
+        String jpql = "SELECT COUNT(e) FROM " + domainClass.getName() + " e WHERE e.id = :id AND e.isDeleted = false";
         Long count = em.createQuery(jpql, Long.class)
                 .setParameter("id", id)
                 .getSingleResult();
