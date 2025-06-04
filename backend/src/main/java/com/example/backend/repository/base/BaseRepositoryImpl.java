@@ -1,13 +1,13 @@
 package com.example.backend.repository.base;
 
-import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityManager;
 
 public class BaseRepositoryImpl<T, ID extends Serializable>
         extends SimpleJpaRepository<T, ID>
