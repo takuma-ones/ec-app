@@ -32,7 +32,4 @@ public class User extends BaseEntity {
 
     @Column(name = "address", columnDefinition = "TEXT")
     private String address;
-
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = false;
 }
