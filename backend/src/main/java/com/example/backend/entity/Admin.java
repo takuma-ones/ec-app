@@ -1,21 +1,16 @@
 package com.example.backend.entity;
 
+import com.example.backend.entity.base.BaseEntity;
 import com.example.backend.enums.AdminRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "admins")
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class Admin {
+public class Admin extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,22 +30,10 @@ public class Admin {
     @Column(name = "role", nullable = false, columnDefinition = "admin_role")
     private AdminRole role;
 
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
     @PrePersist
     public void prePersist() {
         if (role == null) {
             role = AdminRole.ADMIN;
         }
-        isDeleted = false;
     }
 }

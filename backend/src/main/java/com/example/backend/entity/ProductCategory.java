@@ -1,6 +1,7 @@
 // ProductCategory.java
 package com.example.backend.entity;
 
+import com.example.backend.entity.base.BaseEntity;
 import com.example.backend.entity.id.ProductCategoryId;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class ProductCategory {
+public class ProductCategory extends BaseEntity {
 
     @EmbeddedId
     private ProductCategoryId id;

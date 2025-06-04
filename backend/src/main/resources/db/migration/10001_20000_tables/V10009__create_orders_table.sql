@@ -4,6 +4,7 @@ CREATE TABLE orders (
   total_amount INTEGER NOT NULL,
   status order_status NOT NULL,
   shipping_address TEXT NOT NULL,
+  is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
