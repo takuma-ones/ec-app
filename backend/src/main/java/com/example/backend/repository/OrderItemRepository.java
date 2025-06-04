@@ -1,9 +1,9 @@
 package com.example.backend.repository;
 
 import com.example.backend.entity.OrderItem;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.backend.repository.base.BaseRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OrderItemRepository extends JpaRepository<OrderItem, Integer> {
+public interface OrderItemRepository extends BaseRepository<OrderItem, Integer> {
 }

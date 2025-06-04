@@ -1,9 +1,9 @@
 package com.example.backend.repository;
 
 import com.example.backend.entity.CartItem;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.backend.repository.base.BaseRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
+public interface CartItemRepository extends BaseRepository<CartItem, Integer> {
 }

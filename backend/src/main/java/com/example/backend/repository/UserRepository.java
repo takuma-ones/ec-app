@@ -1,9 +1,9 @@
 package com.example.backend.repository;
 
 import com.example.backend.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.backend.repository.base.BaseRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends BaseRepository<User, Integer> {
 }

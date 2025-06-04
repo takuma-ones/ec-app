@@ -1,9 +1,9 @@
 package com.example.backend.repository;
 
 import com.example.backend.entity.ProductImage;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.backend.repository.base.BaseRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductImageRepository extends JpaRepository<ProductImage, Integer> {
+public interface ProductImageRepository extends BaseRepository<ProductImage, Integer> {
 }
