@@ -2,7 +2,7 @@ INSERT INTO admins (name, email, password, role, is_deleted, created_at, updated
 VALUES (
   'システム管理者',
   'admin@example.com',
-  '$2a$10$Yw93uTx1UFH3pLLRL2iJ6OAxh8peN1e.W5Ed8Zx.FbJP26e4YxKT6',
+  '$2a$10$awv0Pxsga2h9oRBGqLgdhurECJBXOt.j4oDkv.xVa8.4TeMqTBIkq',
   'SUPER_ADMIN',
   FALSE,
   CURRENT_TIMESTAMP,

@@ -1,0 +1,62 @@
+package com.example.backend.controller.auth;
+
+import com.example.backend.dto.auth.LoginRequest;
+import com.example.backend.dto.auth.UserSignUpRequest;
+import com.example.backend.entity.User;
+import com.example.backend.repository.UserRepository;
+import com.example.backend.security.JwtUtil;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/user/auth")
+@RequiredArgsConstructor
+public class UserAuthController {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody @Validated UserSignUpRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.badRequest().body("Email already registered");
+        }
+
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setName(request.getName());
+        user.setAddress(request.getAddress());
+        user.setPhone(request.getPhone());
+
+        userRepository.save(user);
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Validated LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
+
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                request.getEmail(), "", // passwordは不要
+                java.util.List.of(() -> "ROLE_USER")
+        );
+
+        String token = jwtUtil.generateToken(userDetails);
+        return ResponseEntity.ok(Map.of("token", token));
+    }
+}

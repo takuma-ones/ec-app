@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface AdminRepository extends BaseRepository<Admin, Integer> {
 
     Optional<Admin> findByEmail(String email);
+    boolean existsByEmail(String email);
 
     boolean existsByEmailAndIsDeletedFalse(String email);
 }
