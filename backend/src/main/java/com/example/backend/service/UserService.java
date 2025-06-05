@@ -1,8 +1,11 @@
 package com.example.backend.service;
 
+import com.example.backend.entity.Admin;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,28 +19,20 @@ public class UserService {
     private final UserRepository userRepository;
 
     // 全取得（isDeleted = false のみ）
-    public List<User> findAll() {
+    public List<User> findAllByIsDeletedFalse() {
         return userRepository.findAllByIsDeletedFalse();
     }
 
     // ID取得（isDeleted = false のみ）
-    public User findById(Integer id) {
+    public User findByIdAndIsDeletedFalse(Integer id) {
         return userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
-    // 新規
-    public User save(User user) {
-        return userRepository.save(user);
-    }
-
-    // 更新
-    public User update(Integer id, User user) {
-        if (!userRepository.existsByIdAndIsDeletedFalse(id)) {
-            throw new RuntimeException("User not found with id: " + id);
-        }
-        user.setId(id);  // id をセットして更新対象を明示
-        return userRepository.save(user);
+    // メールアドレスで取得
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
     // 論理削除
