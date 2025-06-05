@@ -2,6 +2,7 @@
 package com.example.backend.entity;
 
 import com.example.backend.entity.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,5 +28,6 @@ public class Category extends BaseEntity {
 
     // 中間テーブルとのOneToMany。mappedByはProductCategory側のcategoryを指定
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<ProductCategory> productCategories = new HashSet<>();
 }

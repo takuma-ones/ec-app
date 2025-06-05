@@ -1,30 +1,32 @@
-// ProductCategory.java
 package com.example.backend.entity;
 
-import com.example.backend.entity.base.BaseEntity;
 import com.example.backend.entity.id.ProductCategoryId;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "product_categories")
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class ProductCategory extends BaseEntity {
+public class ProductCategory {
 
     @EmbeddedId
-    private ProductCategoryId id;
+    private ProductCategoryId id = new ProductCategoryId();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("productId")
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("categoryId")
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 }
