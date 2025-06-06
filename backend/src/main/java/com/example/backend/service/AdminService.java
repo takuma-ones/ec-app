@@ -5,6 +5,7 @@ import com.example.backend.entity.UserEntity;
 import com.example.backend.repository.AdminRepository;
 import com.example.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +20,12 @@ public class AdminService {
     private final AdminRepository adminRepository;
 
     // 全取得（isDeleted = false のみ）
-    public List<AdminEntity> findAllByIsDeletedFalse() {
-        return adminRepository.findAllByIsDeletedFalse();
+    public List<AdminEntity> findAll() {
+        return adminRepository.findAllByIsDeletedFalse(Sort.by("id"));
     }
 
     // ID取得（isDeleted = false のみ）
-    public AdminEntity findByIdAndIsDeletedFalse(Integer id) {
+    public AdminEntity findById(Integer id) {
         return adminRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("Admin not found with id: " + id));
     }

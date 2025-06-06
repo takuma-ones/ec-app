@@ -1,5 +1,6 @@
 package com.example.backend.repository.base;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -15,6 +16,8 @@ public interface BaseRepository<T, ID extends Serializable> extends JpaRepositor
     Optional<T> findByIdAndIsDeletedFalse(ID id);
 
     List<T> findAllByIsDeletedFalse();
+
+    List<T> findAllByIsDeletedFalse(Sort sort);
 
     boolean existsByIdAndIsDeletedFalse(ID id);
 }

@@ -5,6 +5,7 @@ import com.example.backend.entity.UserEntity;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +20,12 @@ public class UserService {
     private final UserRepository userRepository;
 
     // 全取得（isDeleted = false のみ）
-    public List<UserEntity> findAllByIsDeletedFalse() {
-        return userRepository.findAllByIsDeletedFalse();
+    public List<UserEntity> findAll() {
+        return userRepository.findAllByIsDeletedFalse(Sort.by("id"));
     }
 
     // ID取得（isDeleted = false のみ）
-    public UserEntity findByIdAndIsDeletedFalse(Integer id) {
+    public UserEntity findById(Integer id) {
         return userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }

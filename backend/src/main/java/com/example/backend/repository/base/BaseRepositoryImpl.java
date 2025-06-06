@@ -1,6 +1,11 @@
 package com.example.backend.repository.base;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +14,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BaseRepositoryImpl<T, ID extends Serializable>
         extends SimpleJpaRepository<T, ID>
@@ -48,6 +54,27 @@ public class BaseRepositoryImpl<T, ID extends Serializable>
         String jpql = "SELECT e FROM " + domainClass.getName() + " e WHERE e.isDeleted = false";
         return em.createQuery(jpql, domainClass).getResultList();
     }
+
+    @Override
+    public List<T> findAllByIsDeletedFalse(Sort sort) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<T> cq = cb.createQuery(domainClass);
+        Root<T> root = cq.from(domainClass);
+
+        // WHERE isDeleted = false
+        cq.where(cb.isFalse(root.get("isDeleted")));
+
+        // ソートの適用
+        List<jakarta.persistence.criteria.Order> orders = sort.stream()
+                .map(order -> order.isAscending() ? cb.asc(root.get(order.getProperty())) : cb.desc(root.get(order.getProperty())))
+                .collect(Collectors.toList());
+
+        cq.orderBy(orders);
+
+        return em.createQuery(cq).getResultList();
+    }
+
+
 
     @Override
     public Optional<T> findByIdAndIsDeletedFalse(ID id) {

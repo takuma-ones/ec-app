@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.entity.CartEntity;
 import com.example.backend.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,7 @@ public class CartService {
 
     // 全取得（isDeleted = false のみ）
     public List<CartEntity> findAll() {
-        return cartRepository.findAllByIsDeletedFalse();
+        return cartRepository.findAllByIsDeletedFalse(Sort.by("id"));
     }
 
     // ID取得（isDeleted = false のみ）
