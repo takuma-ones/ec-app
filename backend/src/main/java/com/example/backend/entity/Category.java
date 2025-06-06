@@ -4,8 +4,7 @@ package com.example.backend.entity;
 import com.example.backend.entity.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.HashSet;
@@ -16,6 +15,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
+@NoArgsConstructor
 public class Category extends BaseEntity {
 
     @Id
