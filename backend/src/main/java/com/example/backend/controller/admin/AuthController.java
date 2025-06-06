@@ -1,7 +1,7 @@
 package com.example.backend.controller.admin;
 
-import com.example.backend.dto.admin.auth.SignUpRequest;
-import com.example.backend.dto.common.auth.LoginRequest;
+import com.example.backend.request.admin.auth.SignUpRequest;
+import com.example.backend.request.common.auth.LoginRequest;
 import com.example.backend.entity.Admin;
 import com.example.backend.repository.AdminRepository;
 import com.example.backend.security.JwtUtil;
