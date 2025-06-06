@@ -1,6 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.entity.Cart;
+import com.example.backend.entity.CartEntity;
 import com.example.backend.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,23 +16,23 @@ public class CartService {
     private final CartRepository cartRepository;
 
     // 全取得（isDeleted = false のみ）
-    public List<Cart> findAll() {
+    public List<CartEntity> findAll() {
         return cartRepository.findAllByIsDeletedFalse();
     }
 
     // ID取得（isDeleted = false のみ）
-    public Cart findById(Integer id) {
+    public CartEntity findById(Integer id) {
         return cartRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("Cart not found with id: " + id));
     }
 
     // 新規
-    public Cart save(Cart cart) {
+    public CartEntity save(CartEntity cart) {
         return cartRepository.save(cart);
     }
 
     // 更新
-    public Cart update(Integer id, Cart cart) {
+    public CartEntity update(Integer id, CartEntity cart) {
         if (!cartRepository.existsByIdAndIsDeletedFalse(id)) {
             throw new RuntimeException("Cart not found with id: " + id);
         }

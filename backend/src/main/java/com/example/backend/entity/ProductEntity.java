@@ -16,7 +16,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class Product extends BaseEntity {
+public class ProductEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,5 +44,5 @@ public class Product extends BaseEntity {
     // 中間テーブルとのOneToMany。双方向の場合はmappedByでProductCategory側のproductを指定
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<ProductCategory> productCategories = new HashSet<>();
+    private Set<ProductCategoryEntity> productCategories = new HashSet<>();
 }

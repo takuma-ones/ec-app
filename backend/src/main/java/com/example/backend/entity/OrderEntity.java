@@ -15,7 +15,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class Order extends BaseEntity {
+public class OrderEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class Order extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @Column(name = "total_amount", nullable = false)
     private Integer totalAmount;
@@ -39,5 +39,5 @@ public class Order extends BaseEntity {
     // 逆参照用。注文に紐づく複数の注文詳細（OrderItemなど）を保持する例
     // もしOrderItemエンティティがあれば、下記のように双方向に設定するのが一般的です。
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<OrderItem> orderItems = new HashSet<>();
+    private Set<OrderItemEntity> orderItems = new HashSet<>();
 }

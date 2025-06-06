@@ -1,7 +1,7 @@
 package com.example.backend.service;
 
-import com.example.backend.entity.Admin;
-import com.example.backend.entity.User;
+import com.example.backend.entity.AdminEntity;
+import com.example.backend.entity.UserEntity;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,18 +19,18 @@ public class UserService {
     private final UserRepository userRepository;
 
     // 全取得（isDeleted = false のみ）
-    public List<User> findAllByIsDeletedFalse() {
+    public List<UserEntity> findAllByIsDeletedFalse() {
         return userRepository.findAllByIsDeletedFalse();
     }
 
     // ID取得（isDeleted = false のみ）
-    public User findByIdAndIsDeletedFalse(Integer id) {
+    public UserEntity findByIdAndIsDeletedFalse(Integer id) {
         return userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
     // メールアドレスで取得
-    public User findByEmail(String email) {
+    public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }

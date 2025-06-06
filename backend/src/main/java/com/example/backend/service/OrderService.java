@@ -1,6 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.entity.Order;
+import com.example.backend.entity.OrderEntity;
 import com.example.backend.repository.CartRepository;
 import com.example.backend.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,23 +17,23 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     // 全取得（isDeleted = false のみ）
-    public List<Order> findAll() {
+    public List<OrderEntity> findAll() {
         return orderRepository.findAllByIsDeletedFalse();
     }
 
     // ID取得（isDeleted = false のみ）
-    public Order findById(Integer id) {
+    public OrderEntity findById(Integer id) {
         return orderRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
     }
 
     // 新規
-    public Order save(Order order) {
+    public OrderEntity save(OrderEntity order) {
         return orderRepository.save(order);
     }
 
     // 更新
-    public Order update(Integer id, Order order) {
+    public OrderEntity update(Integer id, OrderEntity order) {
         if (!orderRepository.existsByIdAndIsDeletedFalse(id)) {
             throw new RuntimeException("Order not found with id: " + id);
         }

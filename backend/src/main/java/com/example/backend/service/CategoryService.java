@@ -1,6 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.entity.Category;
+import com.example.backend.entity.CategoryEntity;
 import com.example.backend.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,23 +16,23 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     // 全取得（isDeleted = false のみ）
-    public List<Category> findAll() {
+    public List<CategoryEntity> findAll() {
         return categoryRepository.findAllByIsDeletedFalse();
     }
 
     // ID取得（isDeleted = false のみ）
-    public Category findById(Integer id) {
+    public CategoryEntity findById(Integer id) {
         return categoryRepository. findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
     }
 
     // 新規
-    public Category save(Category category) {
+    public CategoryEntity save(CategoryEntity category) {
         return categoryRepository.save(category);
     }
 
     // 更新
-    public Category update(Integer id, Category category) {
+    public CategoryEntity update(Integer id, CategoryEntity category) {
         if (!categoryRepository.existsByIdAndIsDeletedFalse(id)) {
             throw new RuntimeException("Category not found with id: " + id);
         }

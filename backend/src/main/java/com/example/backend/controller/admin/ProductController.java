@@ -1,7 +1,7 @@
 package com.example.backend.controller.admin;
 
 
-import com.example.backend.entity.Product;
+import com.example.backend.entity.ProductEntity;
 import com.example.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +19,7 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<Product> list() {
+    public List<ProductEntity> list() {
         return productService.findAll();
     }
 

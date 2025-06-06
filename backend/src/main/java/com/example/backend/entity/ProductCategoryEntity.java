@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(name = "product_categories")
 @Getter
 @Setter
-public class ProductCategory {
+public class ProductCategoryEntity {
 
     @EmbeddedId
     private ProductCategoryId id = new ProductCategoryId();
@@ -19,13 +19,13 @@ public class ProductCategory {
     @MapsId("productId")
     @JoinColumn(name = "product_id")
     @JsonBackReference
-    private Product product;
+    private ProductEntity product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("categoryId")
     @JoinColumn(name = "category_id")
     @JsonBackReference
-    private Category category;
+    private CategoryEntity category;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;

@@ -1,14 +1,14 @@
 package com.example.backend.request.admin.category;
 
-import com.example.backend.entity.Category;
+import com.example.backend.entity.CategoryEntity;
 
 public record CategoryRequest(
         String name
 ) {
 
-    public Category toEntity() {
+    public CategoryEntity toEntity() {
 
-        Category category = new Category();
+        CategoryEntity category = new CategoryEntity();
         category.setName(name);
         return category;
     }

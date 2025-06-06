@@ -12,7 +12,7 @@ import org.hibernate.annotations.Type;
 @Table(name = "admins")
 @Getter
 @Setter
-public class Admin extends BaseEntity {
+public class AdminEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

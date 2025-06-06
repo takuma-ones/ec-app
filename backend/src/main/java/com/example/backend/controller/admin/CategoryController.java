@@ -1,6 +1,6 @@
 package com.example.backend.controller.admin;
 
-import com.example.backend.entity.Category;
+import com.example.backend.entity.CategoryEntity;
 import com.example.backend.request.admin.category.CategoryRequest;
 import com.example.backend.response.admin.category.CategoryResponse;
 import com.example.backend.service.CategoryService;
@@ -29,14 +29,14 @@ public class CategoryController {
     // 1件取得
     @GetMapping("/{id}")
     public CategoryResponse get(@PathVariable Integer id) {
-        Category category = categoryService.findById(id);
+        CategoryEntity category = categoryService.findById(id);
         return CategoryResponse.toResponse(category);
     }
 
     // 登録（作成）
     @PostMapping
     public CategoryResponse create(@RequestBody @Validated CategoryRequest request) {
-        Category created = categoryService.save(request.toEntity());
+        CategoryEntity created = categoryService.save(request.toEntity());
         return CategoryResponse.toResponse(created);
     }
 }

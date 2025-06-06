@@ -2,7 +2,7 @@ package com.example.backend.controller.admin;
 
 import com.example.backend.request.admin.auth.SignUpRequest;
 import com.example.backend.request.common.auth.LoginRequest;
-import com.example.backend.entity.Admin;
+import com.example.backend.entity.AdminEntity;
 import com.example.backend.repository.AdminRepository;
 import com.example.backend.security.JwtUtil;
 
@@ -34,7 +34,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Email already registered");
         }
 
-        Admin admin = new Admin();
+        AdminEntity admin = new AdminEntity();
         admin.setName(request.getName());
         admin.setEmail(request.getEmail());
         admin.setPassword(passwordEncoder.encode(request.getPassword()));

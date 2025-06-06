@@ -7,28 +7,25 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "order_items")
+@Table(name = "cart_items")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class OrderItem extends BaseEntity {
+public class CartItemEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")  // 明示的にカラム名を指定
+    @Column(name = "id")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    @JoinColumn(name = "cart_id", nullable = false)
+    private CartEntity cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private ProductEntity product;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
-
-    @Column(name = "price", nullable = false)
-    private Integer price;
 }

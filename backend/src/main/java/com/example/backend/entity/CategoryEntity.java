@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Category extends BaseEntity {
+public class CategoryEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +29,5 @@ public class Category extends BaseEntity {
     // 中間テーブルとのOneToMany。mappedByはProductCategory側のcategoryを指定
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<ProductCategory> productCategories = new HashSet<>();
+    private Set<ProductCategoryEntity> productCategories = new HashSet<>();
 }
