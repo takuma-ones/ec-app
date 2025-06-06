@@ -1,9 +1,9 @@
-package com.example.backend.controller.admin;
+package com.example.backend.controller.user;
 
-import com.example.backend.dto.admin.auth.AdminSignUpRequest;
 import com.example.backend.dto.common.auth.LoginRequest;
-import com.example.backend.entity.Admin;
-import com.example.backend.repository.AdminRepository;
+import com.example.backend.dto.user.auth.UserSignUpRequest;
+import com.example.backend.entity.User;
+import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -18,29 +18,31 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/admin/auth")
+@RestController("UserAuthController")
+@RequestMapping("/api/user/auth")
 @RequiredArgsConstructor
-public class AdminAuthController {
+public class AuthController {
 
-    private final AdminRepository adminRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Validated AdminSignUpRequest request) {
-        if (adminRepository.existsByEmail(request.getEmail())) {
+    public ResponseEntity<?> signup(@RequestBody @Validated UserSignUpRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body("Email already registered");
         }
 
-        Admin admin = new Admin();
-        admin.setName(request.getName());
-        admin.setEmail(request.getEmail());
-        admin.setPassword(passwordEncoder.encode(request.getPassword()));
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setName(request.getName());
+        user.setAddress(request.getAddress());
+        user.setPhone(request.getPhone());
 
-        adminRepository.save(admin);
-        return ResponseEntity.ok("Admin registered successfully");
+        userRepository.save(user);
+        return ResponseEntity.ok("User registered successfully");
     }
 
     @PostMapping("/login")
@@ -50,8 +52,8 @@ public class AdminAuthController {
         );
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                request.getEmail(), "",
-                java.util.List.of(() -> "ROLE_ADMIN")
+                request.getEmail(), "", // passwordは不要
+                java.util.List.of(() -> "ROLE_USER")
         );
 
         String token = jwtUtil.generateToken(userDetails);
