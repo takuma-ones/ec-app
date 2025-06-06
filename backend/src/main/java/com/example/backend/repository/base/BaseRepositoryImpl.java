@@ -36,7 +36,7 @@ public class BaseRepositoryImpl<T, ID extends Serializable>
         T entity = em.find(domainClass, id);
         if (entity != null) {
             try {
-                Field field = domainClass.getDeclaredField("isDeleted");
+                Field field = getFieldFromHierarchy(domainClass, "isDeleted");
                 field.setAccessible(true);
                 field.set(entity, true);
                 em.merge(entity);
@@ -48,6 +48,18 @@ public class BaseRepositoryImpl<T, ID extends Serializable>
             }
         }
     }
+
+    private Field getFieldFromHierarchy(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        while (clazz != null) {
+            try {
+                return clazz.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        throw new NoSuchFieldException("Field '" + fieldName + "' not found in class hierarchy.");
+    }
+
 
     @Override
     public List<T> findAllByIsDeletedFalse() {

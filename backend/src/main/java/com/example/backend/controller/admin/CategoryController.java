@@ -39,4 +39,17 @@ public class CategoryController {
         CategoryEntity created = categoryService.save(request.toEntity());
         return CategoryResponse.toResponse(created);
     }
+
+    // 更新
+    @PutMapping("/{id}")
+    public CategoryResponse update(@PathVariable Integer id, @RequestBody @Validated CategoryRequest request) {
+        CategoryEntity updated = categoryService.update(id, request.toEntity());
+        return CategoryResponse.toResponse(updated);
+    }
+
+    // 削除（論理削除）
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id) {
+        categoryService.deleteById(id);
+    }
 }
