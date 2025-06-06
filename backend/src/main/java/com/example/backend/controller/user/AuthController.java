@@ -1,7 +1,7 @@
 package com.example.backend.controller.user;
 
 import com.example.backend.dto.common.auth.LoginRequest;
-import com.example.backend.dto.user.auth.UserSignUpRequest;
+import com.example.backend.dto.user.auth.SignUpRequest;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtUtil;
@@ -29,7 +29,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Validated UserSignUpRequest request) {
+    public ResponseEntity<?> signup(@RequestBody @Validated SignUpRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body("Email already registered");
         }

@@ -1,6 +1,6 @@
 package com.example.backend.controller.admin;
 
-import com.example.backend.dto.admin.auth.AdminSignUpRequest;
+import com.example.backend.dto.admin.auth.SignUpRequest;
 import com.example.backend.dto.common.auth.LoginRequest;
 import com.example.backend.entity.Admin;
 import com.example.backend.repository.AdminRepository;
@@ -29,7 +29,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Validated AdminSignUpRequest request) {
+    public ResponseEntity<?> signup(@RequestBody @Validated SignUpRequest request) {
         if (adminRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body("Email already registered");
         }
