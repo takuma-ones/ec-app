@@ -1,7 +1,7 @@
-package com.example.backend.controller.auth;
+package com.example.backend.controller.user;
 
-import com.example.backend.dto.auth.LoginRequest;
-import com.example.backend.dto.auth.UserSignUpRequest;
+import com.example.backend.dto.common.auth.LoginRequest;
+import com.example.backend.dto.user.auth.UserSignUpRequest;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtUtil;
