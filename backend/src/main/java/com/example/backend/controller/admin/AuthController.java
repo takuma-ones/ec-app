@@ -30,14 +30,14 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Validated SignUpRequest request) {
-        if (adminRepository.existsByEmail(request.getEmail())) {
+        if (adminRepository.existsByEmail(request.email())) {
             return ResponseEntity.badRequest().body("Email already registered");
         }
 
         AdminEntity admin = new AdminEntity();
-        admin.setName(request.getName());
-        admin.setEmail(request.getEmail());
-        admin.setPassword(passwordEncoder.encode(request.getPassword()));
+        admin.setName(request.name());
+        admin.setEmail(request.email());
+        admin.setPassword(passwordEncoder.encode(request.password()));
 
         adminRepository.save(admin);
         return ResponseEntity.ok("Admin registered successfully");
@@ -46,10 +46,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        AdminEntity admin = adminRepository.findByEmail(request.getEmail())
+        AdminEntity admin = adminRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
@@ -66,4 +66,5 @@ public class AuthController {
                 "email", admin.getEmail()
         ));
     }
+
 }

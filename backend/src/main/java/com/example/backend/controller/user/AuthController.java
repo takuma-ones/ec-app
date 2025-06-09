@@ -30,16 +30,16 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Validated SignUpRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.email())) {
             return ResponseEntity.badRequest().body("Email already registered");
         }
 
         UserEntity user = new UserEntity();
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setName(request.getName());
-        user.setAddress(request.getAddress());
-        user.setPhone(request.getPhone());
+        user.setEmail(request.email());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setName(request.name());
+        user.setAddress(request.address());
+        user.setPhone(request.phone());
 
         userRepository.save(user);
         return ResponseEntity.ok("User registered successfully");
@@ -48,10 +48,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        UserEntity user = userRepository.findByEmail(request.getEmail())
+        UserEntity user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
@@ -68,5 +68,7 @@ public class AuthController {
                 "email", user.getEmail()
         ));
     }
+
+
 
 }

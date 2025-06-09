@@ -1,10 +1,8 @@
 package com.example.backend.request.admin.auth;
 
-import lombok.Data;
-
-@Data
-public class SignUpRequest {
-    private String name;
-    private String email;
-    private String password;
+public record SignUpRequest(
+        String name,
+        String email,
+        String password
+) {
 }
