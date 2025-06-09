@@ -1,6 +1,8 @@
 package com.example.backend.controller.user;
 
-import com.example.backend.entity.ProductEntity;
+import com.example.backend.response.user.product.ProductDetailResponse;
+
+import com.example.backend.response.user.product.ProductResponse;
 import com.example.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,14 +21,17 @@ public class ProductController {
 
     // 一覧取得
     @GetMapping
-    public List<ProductEntity> list() {
-        return productService.findAll();
+    public List<ProductResponse> list() {
+        return productService.findAll()
+                .stream()
+                .map(ProductResponse::toResponse)
+                .toList();
     }
 
     // 1件取得
     @GetMapping("/{id}")
-    public ProductEntity get(@PathVariable Integer id) {
-        return productService.findById(id);
+    public ProductDetailResponse get(@PathVariable Integer id) {
+        return ProductDetailResponse.toResponse(productService.findById(id));
     }
 
     // 登録（作成）

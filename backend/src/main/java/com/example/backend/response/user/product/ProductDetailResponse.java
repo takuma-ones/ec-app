@@ -1,4 +1,4 @@
-package com.example.backend.response.admin.product;
+package com.example.backend.response.user.product;
 
 import com.example.backend.entity.ProductEntity;
 
