@@ -1,5 +1,7 @@
 package com.example.backend.controller.user;
 
+import com.example.backend.entity.CartEntity;
+import com.example.backend.repository.CartRepository;
 import com.example.backend.request.common.auth.LoginRequest;
 import com.example.backend.request.user.auth.SignUpRequest;
 import com.example.backend.entity.UserEntity;
@@ -24,6 +26,7 @@ import java.util.Map;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -41,7 +44,13 @@ public class AuthController {
         user.setAddress(request.address());
         user.setPhone(request.phone());
 
+        // ユーザーを保存
         userRepository.save(user);
+
+        // ここでCartを作成して保存
+        CartEntity cart = new CartEntity();
+        cart.setUser(user);
+        cartRepository.save(cart);
 
         // サインアップ後に認証してJWTトークン生成
         authenticationManager.authenticate(
@@ -87,7 +96,4 @@ public class AuthController {
                 "email", user.getEmail()
         ));
     }
-
-
-
 }
