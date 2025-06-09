@@ -1,13 +1,12 @@
 package com.example.backend.controller.admin;
 
-
 import com.example.backend.entity.ProductEntity;
+import com.example.backend.request.admin.product.ProductRequest;
 import com.example.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,10 +17,29 @@ public class ProductController {
 
     private final ProductService productService;
 
+    // 一覧取得
     @GetMapping
     public List<ProductEntity> list() {
         return productService.findAll();
     }
 
+    // 1件取得
+    @GetMapping("/{id}")
+    public ProductEntity get(@PathVariable Integer id) {
+        return productService.findById(id);
+    }
+
+    // 登録（作成）
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void create(@RequestBody @Validated ProductRequest request) {
+        productService.save(request);
+    }
+
+
+    // 更新
+
+
+    // 削除（論理削除）
 
 }

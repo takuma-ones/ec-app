@@ -1,4 +1,3 @@
-// Product.java
 package com.example.backend.entity;
 
 import com.example.backend.entity.base.BaseEntity;
@@ -41,8 +40,13 @@ public class ProductEntity extends BaseEntity {
     @Column(name = "is_published", nullable = false)
     private boolean isPublished = true;
 
-    // 中間テーブルとのOneToMany。双方向の場合はmappedByでProductCategory側のproductを指定
+    // Product-Category 中間テーブルとの関連
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<ProductCategoryEntity> productCategories = new HashSet<>();
+
+    // Product-Image の関連を追加
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<ProductImageEntity> productImages = new HashSet<>();
 }
