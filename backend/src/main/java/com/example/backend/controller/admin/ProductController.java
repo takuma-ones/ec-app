@@ -38,8 +38,18 @@ public class ProductController {
 
 
     // 更新
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable Integer id, @RequestBody @Validated ProductRequest request) {
+        productService.update(id, request);
+    }
 
 
     // 削除（論理削除）
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer id) {
+        productService.delete(id);
+    }
 
 }
