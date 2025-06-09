@@ -50,6 +50,6 @@ public class CategoryController {
     // 削除（論理削除）
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
-        categoryService.deleteById(id);
+        categoryService.delete(id);
     }
 }

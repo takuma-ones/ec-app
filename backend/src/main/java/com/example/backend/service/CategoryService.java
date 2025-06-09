@@ -42,10 +42,11 @@ public class CategoryService {
     }
 
     // 論理削除
-    public void deleteById(Integer id) {
-        if (!categoryRepository.existsByIdAndIsDeletedFalse(id)) {
-            throw new RuntimeException("Category not found with id: " + id);
-        }
-        categoryRepository.softDeleteById(id);
+    public void delete(Integer id) {
+        CategoryEntity category = categoryRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        category.setIsDeleted(true);
+        categoryRepository.save(category);
     }
+
 }
