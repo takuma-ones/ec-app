@@ -40,8 +40,27 @@ public class AuthController {
         admin.setPassword(passwordEncoder.encode(request.password()));
 
         adminRepository.save(admin);
-        return ResponseEntity.ok("Admin registered successfully");
+
+        // サインアップ後に認証してトークン生成
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                admin.getEmail(), "",
+                java.util.List.of(() -> "ROLE_ADMIN")
+        );
+
+        String token = jwtUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "admin_id", admin.getId(),
+                "name", admin.getName(),
+                "email", admin.getEmail()
+        ));
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginRequest request) {

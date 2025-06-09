@@ -42,8 +42,27 @@ public class AuthController {
         user.setPhone(request.phone());
 
         userRepository.save(user);
-        return ResponseEntity.ok("User registered successfully");
+
+        // サインアップ後に認証してJWTトークン生成
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                user.getEmail(), "",
+                java.util.List.of(() -> "ROLE_USER")
+        );
+
+        String token = jwtUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "user_id", user.getId(),
+                "name", user.getName(),
+                "email", user.getEmail()
+        ));
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginRequest request) {
