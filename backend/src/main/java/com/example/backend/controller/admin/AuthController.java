@@ -49,12 +49,21 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
+        AdminEntity admin = adminRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                request.getEmail(), "",
+                admin.getEmail(), "",
                 java.util.List.of(() -> "ROLE_ADMIN")
         );
 
         String token = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(Map.of("token", token));
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "admin_id", admin.getId(),
+                "name", admin.getName(),
+                "email", admin.getEmail()
+        ));
     }
 }

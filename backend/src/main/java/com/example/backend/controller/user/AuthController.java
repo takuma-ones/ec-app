@@ -51,12 +51,22 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
+        UserEntity user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                request.getEmail(), "", // passwordは不要
+                user.getEmail(), "",
                 java.util.List.of(() -> "ROLE_USER")
         );
 
         String token = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(Map.of("token", token));
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "user_id", user.getId(),
+                "name", user.getName(),
+                "email", user.getEmail()
+        ));
     }
+
 }
