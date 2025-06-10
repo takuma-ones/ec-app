@@ -1,16 +1,13 @@
 package com.example.backend.controller.user;
 
 import com.example.backend.entity.CartEntity;
-import com.example.backend.request.admin.product.ProductRequest;
-import com.example.backend.response.admin.product.ProductDetailResponse;
-import com.example.backend.response.admin.product.ProductResponse;
+import com.example.backend.request.user.cart.CartAddRequest;
+import com.example.backend.response.user.cart.CartResponse;
+import com.example.backend.security.CustomUserDetails;
 import com.example.backend.service.CartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController("UserCartController")
 @RequestMapping("/api/user/carts")
@@ -19,22 +16,25 @@ public class CartController {
 
     private final CartService cartService;
 
-    // 一覧取得
+    // カート情報の取得
+    @GetMapping
+    public CartResponse getMyCart() {
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer userId = loginUser.getId();
 
-
-    // 1件取得
-    @GetMapping("/{userId}")
-    public CartEntity getByUserId(@PathVariable Integer userId) {
-        return cartService.findByUserId(userId);
+        CartEntity cart = cartService.findByUserId(userId);
+        return CartResponse.toResponse(cart);
     }
 
+    // カートへのアイテム追加
+    @PostMapping
+    public CartResponse addCartItem(@RequestBody CartAddRequest request) {
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer userId = loginUser.getId();
 
-    // 登録（作成）
+        CartEntity updatedCart = cartService.addItemToCart(userId, request.productId(), request.quantity());
+        return CartResponse.toResponse(updatedCart);
+    }
 
-
-    // 更新
-
-
-    // 削除（論理削除）
-
+    // 必要に応じて更新・削除も追加
 }

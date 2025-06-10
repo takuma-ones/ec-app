@@ -9,4 +9,7 @@ import java.util.Optional;
 @Repository
 public interface CartRepository extends BaseRepository<CartEntity, Integer> {
     Optional<CartEntity> findByUserIdAndIsDeletedFalse(Integer userId);
+
+    Optional<CartEntity> findByUserId(Integer userId);
+
 }
