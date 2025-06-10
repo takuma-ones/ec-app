@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -52,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Claims claims = jwtUtil.extractAllClaims(token);
             String rolesStr = claims.get("roles", String.class);
+            Integer userId = claims.get("userId", Integer.class);  // ここでuserIdを取得
 
             List<SimpleGrantedAuthority> authorities = List.of();
             if (rolesStr != null && !rolesStr.isEmpty()) {
@@ -60,11 +60,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .collect(Collectors.toList());
             }
 
-            User user = new User(username, "", authorities);
+            // CustomUserDetailsにuserIdをセットして生成
+            CustomUserDetails userDetails = new CustomUserDetails(userId, username, "", authorities);
 
-            if (jwtUtil.validateToken(token, user)) {
+            if (jwtUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        user, null, user.getAuthorities());
+                        userDetails, null, userDetails.getAuthorities());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

@@ -1,4 +1,3 @@
-// com.example.backend.controller.admin.AuthController.java
 package com.example.backend.controller.admin;
 
 import com.example.backend.request.admin.auth.SignUpRequest;
@@ -6,17 +5,19 @@ import com.example.backend.request.common.auth.LoginRequest;
 import com.example.backend.entity.AdminEntity;
 import com.example.backend.repository.AdminRepository;
 import com.example.backend.security.JwtUtil;
+import com.example.backend.security.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController("AdminAuthController")
@@ -42,14 +43,17 @@ public class AuthController {
 
         adminRepository.save(admin);
 
-        // サインアップ後に認証してトークン生成
+        // サインアップ後に認証
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                admin.getEmail(), "",
-                java.util.List.of(() -> "ROLE_ADMIN")
+        // CustomUserDetailsに合わせて生成
+        CustomUserDetails userDetails = new CustomUserDetails(
+                admin.getId(),
+                admin.getEmail(),
+                "", // パスワードはJWTトークン生成には不要
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
 
         String token = jwtUtil.generateToken(userDetails);
@@ -61,7 +65,6 @@ public class AuthController {
                 "email", admin.getEmail()
         ));
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginRequest request) {
@@ -72,9 +75,11 @@ public class AuthController {
         AdminEntity admin = adminRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                admin.getEmail(), "",
-                java.util.List.of(() -> "ROLE_ADMIN")
+        CustomUserDetails userDetails = new CustomUserDetails(
+                admin.getId(),
+                admin.getEmail(),
+                "", // パスワードはトークン生成に不要
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
 
         String token = jwtUtil.generateToken(userDetails);
@@ -86,5 +91,4 @@ public class AuthController {
                 "email", admin.getEmail()
         ));
     }
-
 }
