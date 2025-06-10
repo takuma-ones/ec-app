@@ -1,8 +1,10 @@
 package com.example.backend.service;
 
 import com.example.backend.entity.OrderEntity;
+import com.example.backend.entity.UserEntity;
 import com.example.backend.repository.CartRepository;
 import com.example.backend.repository.OrderRepository;
+import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,13 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
-    // 全取得（isDeleted = false のみ）
-    public List<OrderEntity> findAll() {
-        return orderRepository.findAllByIsDeletedFalse(Sort.by("id"));
+    // 全取得
+    public List<OrderEntity> findOrdersByUserId(Integer userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return orderRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
     // ID取得（isDeleted = false のみ）
