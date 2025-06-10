@@ -1,8 +1,7 @@
+// JwtUtil.java
 package com.example.backend.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,56 +14,55 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // 秘密鍵（256ビット = 32バイトの乱数をbase64等で管理推奨）
-    // 簡易例として直接生成してますが、環境変数やプロパティで管理してください
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final String SECRET_KEY = "fZmJ0VlMxiIqMcf2cw3_7w5DNR-zXtL87MxjPElGz4U=";
+    private final long jwtExpirationMs = 1000 * 60 * 60 * 24 * 7; // 7日
 
-    // トークン有効期間（例：1時間）
-    private final long jwtExpirationMs = 3600000;
+    private Key getSignInKey() {
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    }
 
-    // ユーザ名（subject）を抽出
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // 有効期限を抽出
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-    // 汎用クレーム抽出
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    // 全クレーム取得
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    // トークンが期限切れか判定
+    public String generateToken(UserDetails userDetails) {
+        // 権限を文字列にして埋め込む
+        String roles = userDetails.getAuthorities().stream()
+                .map(auth -> auth.getAuthority())
+                .reduce((a, b) -> a + "," + b).orElse("");
+
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .claim("roles", roles)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(getSignInKey())
+                .compact();
+    }
+
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // トークン生成
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(key)
-                .compact();
-    }
-
-    // トークンの妥当性チェック
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 }

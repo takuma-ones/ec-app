@@ -1,3 +1,4 @@
+// com.example.backend.controller.admin.AuthController.java
 package com.example.backend.controller.admin;
 
 import com.example.backend.request.admin.auth.SignUpRequest;

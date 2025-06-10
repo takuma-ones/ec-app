@@ -1,3 +1,4 @@
+// CustomUserDetails.java
 package com.example.backend.security;
 
 import org.springframework.security.core.GrantedAuthority;

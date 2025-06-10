@@ -1,3 +1,4 @@
+// SecurityConfig.java
 package com.example.backend.config;
 
 import com.example.backend.security.JwtAuthenticationFilter;
@@ -54,8 +55,7 @@ public class SecurityConfig {
                 .securityMatcher("/api/user/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/user/auth/**",
-                                "/api/user/products/**"
+                                "/api/user/auth/**"
                         )
                         .permitAll()
                         .anyRequest().hasRole("USER")

@@ -1,5 +1,5 @@
+// CustomUserDetailsService.java
 package com.example.backend.security;
-
 
 import com.example.backend.repository.AdminRepository;
 import com.example.backend.repository.UserRepository;
@@ -27,12 +27,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         // AdminかUserのどちらかに存在するかを確認
         return adminRepository.findByEmail(username)
                 .map(admin -> new org.springframework.security.core.userdetails.User(
-                        admin.getEmail(), admin.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
-                ))
-                .or(() -> userRepository.findByEmail(username)
-                        .map(user -> new org.springframework.security.core.userdetails.User(
-                                user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                        )))
-                .orElseThrow(() -> new UsernameNotFoundException("ユーザーが見つかりません: " + username));
+                        admin.getEmail(), admin.getPassword(),
+                        List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))))
+                .orElseGet(() ->
+                        userRepository.findByEmail(username)
+                                .map(user -> new org.springframework.security.core.userdetails.User(
+                                        user.getEmail(), user.getPassword(),
+                                        List.of(new SimpleGrantedAuthority("ROLE_USER"))))
+                                .orElseThrow(() -> new UsernameNotFoundException("User not found"))
+                );
     }
 }
