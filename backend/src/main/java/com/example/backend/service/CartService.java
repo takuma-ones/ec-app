@@ -68,7 +68,25 @@ public class CartService {
     }
 
 
-    // 物理削除(cart_item)
+    // カートアイテムの数量を更新する
+    public CartEntity updateItemQuantity(Integer userId, Integer productId, Integer newQuantity) {
+        if (newQuantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+        
+        CartEntity cart = cartRepository.findByUserIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        CartItemEntity item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        item.setQuantity(newQuantity);
+        cartItemRepository.save(item);
+
+        return cartRepository.findById(cart.getId())
+                .orElseThrow(() -> new RuntimeException("Cart not found after update"));
+    }
+
 
 
 }

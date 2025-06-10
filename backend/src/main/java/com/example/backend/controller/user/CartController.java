@@ -4,6 +4,7 @@ package com.example.backend.controller.user;
 
 import com.example.backend.entity.CartEntity;
 import com.example.backend.request.user.cart.CartAddRequest;
+import com.example.backend.request.user.cart.CartUpdateRequest;
 import com.example.backend.response.user.cart.CartResponse;
 import com.example.backend.security.CustomUserDetails;
 import com.example.backend.service.CartService;
@@ -40,5 +41,18 @@ public class CartController {
         return ResponseEntity.ok(response);  // HTTP 200 OK + JSON
     }
 
-    // 必要に応じて更新・削除も追加
+    // カート内アイテムの数量更新
+    @PutMapping("/items/{productId}")
+    public ResponseEntity<CartResponse> updateCartItem(
+            @PathVariable Integer productId,
+            @RequestBody CartUpdateRequest request
+    ) {
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer userId = loginUser.getId();
+
+        CartEntity updatedCart = cartService.updateItemQuantity(userId, productId, request.quantity());
+        CartResponse response = CartResponse.toResponse(updatedCart);
+        return ResponseEntity.ok(response); // HTTP 200 OK
+    }
+
 }
