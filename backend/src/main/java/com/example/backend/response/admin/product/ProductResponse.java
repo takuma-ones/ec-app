@@ -18,7 +18,7 @@ public record ProductResponse(
         List<ProductImageResponse> productImages,
         List<ProductCategoryResponse> productCategories
 ) {
-    public static ProductResponse toResponse(ProductEntity product) {
+    public static ProductResponse fromEntity(ProductEntity product) {
         return new ProductResponse(
                 product.getId(),
                 product.getSku(),

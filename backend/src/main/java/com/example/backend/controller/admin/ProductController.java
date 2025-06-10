@@ -24,14 +24,14 @@ public class ProductController {
     public List<ProductResponse> list() {
         return productService.findAll()
                 .stream()
-                .map(ProductResponse::toResponse)
+                .map(ProductResponse::fromEntity)
                 .toList();
     }
 
     // 1件取得
     @GetMapping("/{id}")
     public ProductDetailResponse get(@PathVariable Integer id) {
-        return ProductDetailResponse.toResponse(productService.findById(id));
+        return ProductDetailResponse.fromEntity(productService.findById(id));
     }
 
     // 登録（作成）

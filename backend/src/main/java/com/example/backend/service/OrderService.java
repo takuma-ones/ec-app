@@ -83,7 +83,7 @@ public class OrderService {
         cartItemRepository.deleteAll(cartItems);
 
         // 9. OrderResponse作成して返す（実装例）
-        return OrderResponse.toResponse(order);
+        return OrderResponse.fromEntity(order);
     }
 
 

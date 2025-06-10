@@ -6,7 +6,7 @@ public record CategoryResponse(
         Integer id,
         String name
 ) {
-    public static CategoryResponse toResponse(CategoryEntity entity) {
+    public static CategoryResponse fromEntity(CategoryEntity entity) {
         return new CategoryResponse(
                 entity.getId(),
                 entity.getName()

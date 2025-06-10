@@ -27,7 +27,7 @@ public class CartController {
         Integer userId = loginUser.getId();
 
         CartEntity cart = cartService.findByUserId(userId);
-        return CartResponse.toResponse(cart);
+        return CartResponse.fromEntity(cart);
     }
 
     // カートへのアイテム追加（ResponseEntityでステータス返却）
@@ -37,7 +37,7 @@ public class CartController {
         Integer userId = loginUser.getId();
 
         CartEntity updatedCart = cartService.addItemToCart(userId, request.productId(), request.quantity());
-        CartResponse response = CartResponse.toResponse(updatedCart);
+        CartResponse response = CartResponse.fromEntity(updatedCart);
         return ResponseEntity.ok(response);  // HTTP 200 OK + JSON
     }
 
@@ -51,7 +51,7 @@ public class CartController {
         Integer userId = loginUser.getId();
 
         CartEntity updatedCart = cartService.updateItemQuantity(userId, productId, request.quantity());
-        CartResponse response = CartResponse.toResponse(updatedCart);
+        CartResponse response = CartResponse.fromEntity(updatedCart);
         return ResponseEntity.ok(response); // HTTP 200 OK
     }
 
@@ -62,7 +62,7 @@ public class CartController {
         Integer userId = loginUser.getId();
 
         CartEntity updatedCart = cartService.removeItemFromCart(userId, productId);
-        CartResponse response = CartResponse.toResponse(updatedCart);
+        CartResponse response = CartResponse.fromEntity(updatedCart);
         return ResponseEntity.ok(response); // HTTP 200 OK
     }
 

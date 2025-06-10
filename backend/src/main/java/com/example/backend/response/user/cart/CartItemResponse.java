@@ -7,7 +7,7 @@ public record CartItemResponse(
         Integer productId,
         Integer quantity
 ) {
-    public static CartItemResponse toResponse(CartItemEntity entity) {
+    public static CartItemResponse fromEntity(CartItemEntity entity) {
         return new CartItemResponse(
                 entity.getId(),
                 entity.getProduct().getId(),

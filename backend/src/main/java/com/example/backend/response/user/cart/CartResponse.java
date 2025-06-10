@@ -9,12 +9,12 @@ public record CartResponse(
         Integer userId,
         List<CartItemResponse> cartItems
 ) {
-    public static CartResponse toResponse(CartEntity cart) {
+    public static CartResponse fromEntity(CartEntity cart) {
         return new CartResponse(
                 cart.getId(),
                 cart.getUser().getId(),
                 cart.getCartItems().stream()
-                        .map(CartItemResponse::toResponse)
+                        .map(CartItemResponse::fromEntity)
                         .toList()
         );
     }

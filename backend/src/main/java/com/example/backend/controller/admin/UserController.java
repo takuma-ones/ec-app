@@ -23,7 +23,7 @@ public class UserController {
     @GetMapping
     public List<UserResponse> list() {
         return userService.findAll().stream()
-                .map(UserResponse::toResponse)
+                .map(UserResponse::fromEntity)
                 .toList();
     }
 
@@ -31,7 +31,7 @@ public class UserController {
      @GetMapping("/{id}")
      public UserResponse get(@PathVariable Integer id) {
             UserEntity user = userService.findById(id);
-            return UserResponse.toResponse(user);
+            return UserResponse.fromEntity(user);
      }
 
 }

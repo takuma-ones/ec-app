@@ -13,7 +13,7 @@ public record UserResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-    public static UserResponse toResponse(UserEntity entity) {
+    public static UserResponse fromEntity(UserEntity entity) {
         return new UserResponse(
                 entity.getId(),
                 entity.getName(),

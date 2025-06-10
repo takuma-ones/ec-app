@@ -16,7 +16,7 @@ public record OrderResponse(
         LocalDateTime createdAt,
         List<OrderItemResponse> items
 ) {
-    public static OrderResponse toResponse(OrderEntity order) {
+    public static OrderResponse fromEntity(OrderEntity order) {
         List<OrderItemResponse> items = order.getOrderItems().stream()
                 .map(OrderItemResponse::fromEntity)
                 .collect(Collectors.toList());

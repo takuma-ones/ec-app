@@ -29,7 +29,7 @@ public class OrderController {
         List<OrderEntity> orders = orderService.findOrdersByUserId(userId);
 
         return orders.stream()
-                .map(OrderResponse::toResponse)
+                .map(OrderResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 

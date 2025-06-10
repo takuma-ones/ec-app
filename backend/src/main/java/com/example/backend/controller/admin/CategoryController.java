@@ -22,7 +22,7 @@ public class CategoryController {
     public List<CategoryResponse> list() {
         return categoryService.findAll()
                 .stream()
-                .map(CategoryResponse::toResponse)
+                .map(CategoryResponse::fromEntity)
                 .toList();
     }
 
@@ -30,21 +30,21 @@ public class CategoryController {
     @GetMapping("/{id}")
     public CategoryResponse get(@PathVariable Integer id) {
         CategoryEntity category = categoryService.findById(id);
-        return CategoryResponse.toResponse(category);
+        return CategoryResponse.fromEntity(category);
     }
 
     // 登録（作成）
     @PostMapping
     public CategoryResponse create(@RequestBody @Validated CategoryRequest request) {
         CategoryEntity created = categoryService.save(request.toEntity());
-        return CategoryResponse.toResponse(created);
+        return CategoryResponse.fromEntity(created);
     }
 
     // 更新
     @PutMapping("/{id}")
     public CategoryResponse update(@PathVariable Integer id, @RequestBody @Validated CategoryRequest request) {
         CategoryEntity updated = categoryService.update(id, request.toEntity());
-        return CategoryResponse.toResponse(updated);
+        return CategoryResponse.fromEntity(updated);
     }
 
     // 削除（論理削除）
