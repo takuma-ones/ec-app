@@ -55,4 +55,15 @@ public class CartController {
         return ResponseEntity.ok(response); // HTTP 200 OK
     }
 
+    // item物理削除
+    @DeleteMapping("/items/{productId}")
+    public ResponseEntity<CartResponse> deleteCartItem(@PathVariable Integer productId) {
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer userId = loginUser.getId();
+
+        CartEntity updatedCart = cartService.removeItemFromCart(userId, productId);
+        CartResponse response = CartResponse.toResponse(updatedCart);
+        return ResponseEntity.ok(response); // HTTP 200 OK
+    }
+
 }

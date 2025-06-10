@@ -73,7 +73,7 @@ public class CartService {
         if (newQuantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than 0");
         }
-        
+
         CartEntity cart = cartRepository.findByUserIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
@@ -85,6 +85,20 @@ public class CartService {
 
         return cartRepository.findById(cart.getId())
                 .orElseThrow(() -> new RuntimeException("Cart not found after update"));
+    }
+
+    // カートアイテムの物理削除
+    public CartEntity removeItemFromCart(Integer userId, Integer productId) {
+        CartEntity cart = cartRepository.findByUserIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        CartItemEntity item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        cartItemRepository.delete(item);
+
+        return cartRepository.findById(cart.getId())
+                .orElseThrow(() -> new RuntimeException("Cart not found after item deletion"));
     }
 
 
