@@ -1,4 +1,4 @@
 package com.example.backend.request.user.order;
 
-public record OrderCreateRequest() {
+public record OrderCreateRequest(String shippingAddress) {
 }
