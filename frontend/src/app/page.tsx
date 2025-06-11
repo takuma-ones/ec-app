@@ -1,21 +1,14 @@
-import axios from "axios";
+import Link from 'next/link'
 
-async function getProductsMessage() {
-  try {
-    const response = await axios.get("http://localhost:8080/api/products");
-    return response.data;
-  } catch {
-    return "Error fetching data";
-  }
-}
-
-export default async function Home() {
-  const message = await getProductsMessage();
-
+export default function Home() {
   return (
-    <div>
-      <h1>Welcome to the Home Page</h1>
-      <p>APIからのメッセージ: {message}</p>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <h1 className="text-2xl font-bold mb-4">ようこそ ファッションECサイト へ</h1>
+      <Link href="/user/products">
+        <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          商品一覧を見る
+        </button>
+      </Link>
     </div>
-  );
+  )
 }

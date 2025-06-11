@@ -9,6 +9,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // 🔽 認証不要の user ページを除外
+  if (pathname === '/user/products' || pathname.startsWith('/user/products/')) {
+    return NextResponse.next()
+  }
+
   // admin配下の認証チェック
   if (pathname.startsWith('/admin')) {
     const token = request.cookies.get('admin-token')
