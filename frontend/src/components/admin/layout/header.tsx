@@ -1,22 +1,22 @@
-"use client"
+'use client'
 
-import { useRouter } from "next/navigation"
-import { deleteCookie, getCookie } from "cookies-next"
-import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
+import { useRouter } from 'next/navigation'
+import { deleteCookie, getCookie } from 'cookies-next'
+import { Button } from '@/components/ui/button'
+import { useEffect, useState } from 'react'
 
-export default function Header() {
+export default function AdminHeader() {
   const router = useRouter()
   const [adminToken, setAdminToken] = useState<string | null>(null)
 
   useEffect(() => {
-    const token = getCookie("admin-token")
-    setAdminToken(typeof token === "string" ? token : null)
+    const token = getCookie('admin-token')
+    setAdminToken(typeof token === 'string' ? token : null)
   }, [])
 
   const handleLogout = () => {
-    deleteCookie("admin-token", { path: "/admin" })
-    router.push("/admin/login")
+    deleteCookie('admin-token', { path: '/admin' })
+    router.push('/admin/login')
   }
 
   // adminTokenがなければヘッダー自体を表示しない
