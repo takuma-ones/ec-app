@@ -19,15 +19,14 @@ export default function AdminHeader() {
     router.push('/admin/login')
   }
 
-  // adminTokenがなければヘッダー自体を表示しない
-  if (!adminToken) return null
-
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-slate-800 border-b border-slate-700">
       <h1 className="text-xl font-bold text-white">管理者ダッシュボード</h1>
-      <Button onClick={handleLogout} variant="destructive">
-        ログアウト
-      </Button>
+      {adminToken && (
+        <Button onClick={handleLogout} variant="destructive">
+          ログアウト
+        </Button>
+      )}
     </header>
   )
 }
