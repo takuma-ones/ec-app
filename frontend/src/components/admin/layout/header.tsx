@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { deleteCookie, getCookie } from 'cookies-next'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
+import Link from 'next/link' // ← 追加
 
 export default function AdminHeader() {
   const router = useRouter()
@@ -21,7 +22,9 @@ export default function AdminHeader() {
 
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-slate-800 border-b border-slate-700">
-      <h1 className="text-xl font-bold text-white">管理者ダッシュボード</h1>
+      <Link href="/admin/dashboard" className="text-xl font-bold text-white hover:underline">
+        管理者ダッシュボード
+      </Link>
       {adminToken && (
         <Button onClick={handleLogout} variant="destructive">
           ログアウト
