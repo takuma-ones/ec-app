@@ -1,7 +1,6 @@
 'use client'
 
 import type React from 'react'
-
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,16 +12,26 @@ import { useRouter } from 'next/navigation'
 import { setCookie } from 'cookies-next'
 import { AxiosError } from 'axios'
 import { ValidationErrorResponse } from '@/types/common/validation'
-import { loginUser } from '@/lib/api/user/auth'
+import { loginUser, signUpUser } from '@/lib/api/user/auth'
 
 export default function UserAuthForm() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showSignupPassword, setShowSignupPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  // ログイン用
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+
+  // サインアップ用
+  const [signupName, setSignupName] = useState('')
+  const [signupEmail, setSignupEmail] = useState('')
+  const [signupPassword, setSignupPassword] = useState('')
+  const [signupPhone, setSignupPhone] = useState('')
+  const [signupAddress, setSignupAddress] = useState('')
+  const [signupFieldErrors, setSignupFieldErrors] = useState<Record<string, string>>({})
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,13 +40,10 @@ export default function UserAuthForm() {
 
     try {
       const res = await loginUser({ email, password })
-
       setCookie('user-token', res.token, { path: '/', maxAge: 60 * 60 })
-
       router.push('/user/products')
     } catch (error) {
       const axiosError = error as AxiosError<ValidationErrorResponse>
-
       if (axiosError.response?.status === 400 && Array.isArray(axiosError.response.data?.errors)) {
         const newErrors: Record<string, string> = {}
         axiosError.response.data.errors.forEach((e) => {
@@ -47,20 +53,42 @@ export default function UserAuthForm() {
       }
     } finally {
       setIsLoading(false)
-      console.log(fieldErrors)
     }
   }
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    // サインアップ処理をここに実装
-    console.log('Signup submitted')
+    setIsLoading(true)
+    setSignupFieldErrors({})
+
+    try {
+      const res = await signUpUser({
+        name: signupName,
+        email: signupEmail,
+        password: signupPassword,
+        phone: signupPhone,
+        address: signupAddress,
+      })
+
+      setCookie('user-token', res.token, { path: '/', maxAge: 60 * 60 })
+      router.push('/user/products')
+    } catch (error) {
+      const axiosError = error as AxiosError<ValidationErrorResponse>
+      if (axiosError.response?.status === 400 && Array.isArray(axiosError.response.data?.errors)) {
+        const newErrors: Record<string, string> = {}
+        axiosError.response.data.errors.forEach((e) => {
+          newErrors[e.field] = e.defaultMessage
+        })
+        setSignupFieldErrors(newErrors)
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* ロゴ・ブランド部分 */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-full mb-4">
             <ShoppingBag className="w-8 h-8 text-white" />
@@ -76,7 +104,7 @@ export default function UserAuthForm() {
               <TabsTrigger value="signup">新規登録</TabsTrigger>
             </TabsList>
 
-            {/* ログインタブ */}
+            {/* ログイン */}
             <TabsContent value="login">
               <CardHeader className="space-y-1 pb-4">
                 <CardTitle className="text-xl">ログイン</CardTitle>
@@ -89,12 +117,14 @@ export default function UserAuthForm() {
                     <Input
                       id="login-email"
                       type="email"
-                      placeholder="example@email.com"
-                      required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      required
                       className="h-11"
                     />
+                    {fieldErrors.email && (
+                      <p className="text-red-500 text-sm">{fieldErrors.email}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="login-password">パスワード</Label>
@@ -102,10 +132,9 @@ export default function UserAuthForm() {
                       <Input
                         id="login-password"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="パスワードを入力"
-                        required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                         className="h-11 pr-10"
                       />
                       <button
@@ -120,6 +149,9 @@ export default function UserAuthForm() {
                         )}
                       </button>
                     </div>
+                    {fieldErrors.password && (
+                      <p className="text-red-500 text-sm">{fieldErrors.password}</p>
+                    )}
                   </div>
                   <Button type="submit" className="w-full h-11 bg-slate-900 hover:bg-slate-800">
                     {isLoading ? (
@@ -135,7 +167,7 @@ export default function UserAuthForm() {
               </CardContent>
             </TabsContent>
 
-            {/* サインアップタブ */}
+            {/* 新規登録 */}
             <TabsContent value="signup">
               <CardHeader className="space-y-1 pb-4">
                 <CardTitle className="text-xl">新規登録</CardTitle>
@@ -148,20 +180,28 @@ export default function UserAuthForm() {
                     <Input
                       id="signup-name"
                       type="text"
-                      placeholder="山田 太郎"
+                      value={signupName}
+                      onChange={(e) => setSignupName(e.target.value)}
                       required
                       className="h-11"
                     />
+                    {signupFieldErrors.name && (
+                      <p className="text-red-500 text-sm">{signupFieldErrors.name}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">メールアドレス</Label>
                     <Input
                       id="signup-email"
                       type="email"
-                      placeholder="example@email.com"
+                      value={signupEmail}
+                      onChange={(e) => setSignupEmail(e.target.value)}
                       required
                       className="h-11"
                     />
+                    {signupFieldErrors.email && (
+                      <p className="text-red-500 text-sm">{signupFieldErrors.email}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">パスワード</Label>
@@ -169,7 +209,8 @@ export default function UserAuthForm() {
                       <Input
                         id="signup-password"
                         type={showSignupPassword ? 'text' : 'password'}
-                        placeholder="8文字以上のパスワード"
+                        value={signupPassword}
+                        onChange={(e) => setSignupPassword(e.target.value)}
                         required
                         minLength={8}
                         className="h-11 pr-10"
@@ -186,15 +227,43 @@ export default function UserAuthForm() {
                         )}
                       </button>
                     </div>
-                    <p className="text-xs text-slate-500">
-                      8文字以上で、英数字を含むパスワードを設定してください
-                    </p>
+                    {signupFieldErrors.password && (
+                      <p className="text-red-500 text-sm">{signupFieldErrors.password}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-phone">電話番号</Label>
+                    <Input
+                      id="signup-phone"
+                      type="tel"
+                      value={signupPhone}
+                      onChange={(e) => setSignupPhone(e.target.value)}
+                      required
+                      className="h-11"
+                    />
+                    {signupFieldErrors.phone && (
+                      <p className="text-red-500 text-sm">{signupFieldErrors.phone}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-address">住所</Label>
+                    <Input
+                      id="signup-address"
+                      type="text"
+                      value={signupAddress}
+                      onChange={(e) => setSignupAddress(e.target.value)}
+                      required
+                      className="h-11"
+                    />
+                    {signupFieldErrors.address && (
+                      <p className="text-red-500 text-sm">{signupFieldErrors.address}</p>
+                    )}
                   </div>
                   <Button type="submit" className="w-full h-11 bg-slate-900 hover:bg-slate-800">
                     {isLoading ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        認証中...
+                        登録中...
                       </div>
                     ) : (
                       'アカウントを作成'
@@ -206,7 +275,6 @@ export default function UserAuthForm() {
           </Tabs>
         </Card>
 
-        {/* フッター */}
         <div className="text-center mt-6 text-sm text-slate-500">
           <p>© 2024 ECストア. All rights reserved.</p>
         </div>

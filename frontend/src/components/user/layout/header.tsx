@@ -4,15 +4,17 @@ import { useRouter } from 'next/navigation'
 import { deleteCookie, getCookie } from 'cookies-next'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 export default function UserHeader() {
   const router = useRouter()
+  const pathname = usePathname()
   const [userToken, setUserToken] = useState<string | null | undefined>(undefined)
 
   useEffect(() => {
     const token = getCookie('user-token')
     setUserToken(typeof token === 'string' ? token : null)
-  }, [])
+  }, [pathname])
 
   const handleLogout = () => {
     deleteCookie('user-token', { path: '/' })
