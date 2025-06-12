@@ -9,15 +9,46 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Eye, EyeOff, ShoppingBag } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { setCookie } from 'cookies-next'
+import { AxiosError } from 'axios'
+import { ValidationErrorResponse } from '@/types/common/validation'
+import { loginUser } from '@/lib/api/user/auth'
 
-export default function AuthForm() {
+export default function UserAuthForm() {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showSignupPassword, setShowSignupPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    // ログイン処理をここに実装
-    console.log('Login submitted')
+    setIsLoading(true)
+    setFieldErrors({})
+
+    try {
+      const res = await loginUser({ email, password })
+
+      setCookie('user-token', res.token, { path: '/', maxAge: 60 * 60 })
+
+      router.push('/user/products')
+    } catch (error) {
+      const axiosError = error as AxiosError<ValidationErrorResponse>
+
+      if (axiosError.response?.status === 400 && Array.isArray(axiosError.response.data?.errors)) {
+        const newErrors: Record<string, string> = {}
+        axiosError.response.data.errors.forEach((e) => {
+          newErrors[e.field] = e.defaultMessage
+        })
+        setFieldErrors(newErrors)
+      }
+    } finally {
+      setIsLoading(false)
+      console.log(fieldErrors)
+    }
   }
 
   const handleSignup = (e: React.FormEvent) => {
@@ -60,6 +91,8 @@ export default function AuthForm() {
                       type="email"
                       placeholder="example@email.com"
                       required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="h-11"
                     />
                   </div>
@@ -71,6 +104,8 @@ export default function AuthForm() {
                         type={showPassword ? 'text' : 'password'}
                         placeholder="パスワードを入力"
                         required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className="h-11 pr-10"
                       />
                       <button
@@ -86,17 +121,15 @@ export default function AuthForm() {
                       </button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input type="checkbox" className="rounded border-slate-300" />
-                      <span className="text-slate-600">ログイン状態を保持</span>
-                    </label>
-                    <a href="#" className="text-slate-900 hover:underline font-medium">
-                      パスワードを忘れた方
-                    </a>
-                  </div>
                   <Button type="submit" className="w-full h-11 bg-slate-900 hover:bg-slate-800">
-                    ログイン
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        認証中...
+                      </div>
+                    ) : (
+                      'ログイン'
+                    )}
                   </Button>
                 </form>
               </CardContent>
@@ -157,26 +190,15 @@ export default function AuthForm() {
                       8文字以上で、英数字を含むパスワードを設定してください
                     </p>
                   </div>
-                  <div className="flex items-start space-x-2">
-                    <input
-                      type="checkbox"
-                      id="terms"
-                      required
-                      className="mt-1 rounded border-slate-300"
-                    />
-                    <label htmlFor="terms" className="text-sm text-slate-600 cursor-pointer">
-                      <a href="#" className="text-slate-900 hover:underline font-medium">
-                        利用規約
-                      </a>
-                      および
-                      <a href="#" className="text-slate-900 hover:underline font-medium">
-                        プライバシーポリシー
-                      </a>
-                      に同意します
-                    </label>
-                  </div>
                   <Button type="submit" className="w-full h-11 bg-slate-900 hover:bg-slate-800">
-                    アカウントを作成
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        認証中...
+                      </div>
+                    ) : (
+                      'アカウントを作成'
+                    )}
                   </Button>
                 </form>
               </CardContent>

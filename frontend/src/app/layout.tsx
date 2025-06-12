@@ -1,15 +1,13 @@
-import "@/app/globals.css";
+import '@/app/globals.css'
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="ja">
-      <body className="bg-slate-950 text-white">
-        {children}
-      </body>
+      <body className="body">{children}</body>
     </html>
-  );
+  )
 }

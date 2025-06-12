@@ -1,5 +1,10 @@
-export default function layout() {
+import UserHeader from '@/components/user/layout/header'
+
+export default function Userlayout({ children }: { children: React.ReactNode }) {
   return (
-    <div>layout</div>
+    <div>
+      <UserHeader />
+      {children}
+    </div>
   )
 }
