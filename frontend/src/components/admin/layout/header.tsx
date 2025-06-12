@@ -15,7 +15,7 @@ export default function AdminHeader() {
   }, [])
 
   const handleLogout = () => {
-    deleteCookie('admin-token', { path: '/admin' })
+    deleteCookie('admin-token', { path: '/' })
     router.push('/admin/login')
   }
 
