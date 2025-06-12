@@ -5,6 +5,7 @@ import { deleteCookie, getCookie } from 'cookies-next'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 export default function UserHeader() {
   const router = useRouter()
@@ -28,7 +29,9 @@ export default function UserHeader() {
 
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-slate-800 border-b border-slate-700">
-      <h1 className="text-xl font-bold text-white">User</h1>
+      <h1 className="text-xl font-bold text-white cursor-pointer">
+        <Link href="/user/products">User</Link>
+      </h1>
 
       {/* Button は userToken が undefined（まだ読み込み中）の間は非表示 */}
       {userToken !== undefined &&
