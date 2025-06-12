@@ -52,7 +52,7 @@ type BackButtonProps = {
 export function BackButton({
   variant = 'back',
   children,
-  dashboardPath = '/admin/(private)/dashboard',
+  dashboardPath = '/admin/dashboard',
   homePath = '/admin',
   className,
   ...props
