@@ -1,4 +1,3 @@
-// SecurityConfig.java
 package com.example.backend.config;
 
 import com.example.backend.security.JwtAuthenticationFilter;
@@ -6,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +22,6 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userDetailsService;
-    // private final PasswordEncoder passwordEncoder;  ← これを削除
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,10 +34,8 @@ public class SecurityConfig {
         http
                 .securityMatcher("/api/admin/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/admin/auth/**"
-                        )
-                        .permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // 追加
+                        .requestMatchers("/api/admin/auth/**").permitAll()
                         .anyRequest().hasRole("ADMIN")
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -54,11 +51,11 @@ public class SecurityConfig {
         http
                 .securityMatcher("/api/user/**")
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // 追加
                         .requestMatchers(
                                 "/api/user/auth/**",
                                 "/api/user/products/**"
-                        )
-                        .permitAll()
+                        ).permitAll()
                         .anyRequest().hasRole("USER")
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -73,7 +70,7 @@ public class SecurityConfig {
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authBuilder
                 .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());  // ここはメソッド呼び出しに変更
+                .passwordEncoder(passwordEncoder());
 
         return authBuilder.build();
     }
