@@ -36,7 +36,7 @@ public class ProductService {
     }
 
     // 新規
-    public void save(ProductRequest request) {
+    public ProductEntity save(ProductRequest request) {
         ProductEntity product = new ProductEntity();
         product.setSku(request.sku());
         product.setName(request.name());
@@ -69,11 +69,11 @@ public class ProductService {
                 .collect(Collectors.toSet());
         product.setProductImages(productImages);
 
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
     // 更新
-    public void update(Integer id, ProductRequest request) {
+    public ProductEntity update(Integer id, ProductRequest request) {
         ProductEntity product = productRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
@@ -113,7 +113,7 @@ public class ProductService {
                 .collect(Collectors.toSet());
         product.getProductImages().addAll(productImages);
 
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
 

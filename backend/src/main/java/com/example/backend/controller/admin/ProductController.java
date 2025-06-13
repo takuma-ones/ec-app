@@ -1,12 +1,16 @@
 package com.example.backend.controller.admin;
 
+import com.example.backend.entity.CategoryEntity;
 import com.example.backend.entity.ProductEntity;
+import com.example.backend.request.admin.category.CategoryRequest;
 import com.example.backend.request.admin.product.ProductRequest;
+import com.example.backend.response.admin.category.CategoryResponse;
 import com.example.backend.response.admin.product.ProductDetailResponse;
 import com.example.backend.response.admin.product.ProductResponse;
 import com.example.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,19 +40,17 @@ public class ProductController {
 
     // 登録（作成）
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Validated ProductRequest request) {
-        productService.save(request);
+    public ProductResponse create(@RequestBody @Validated ProductRequest request) {
+        ProductEntity created = productService.save(request);
+        return ProductResponse.fromEntity(created);
     }
-
 
     // 更新
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable Integer id, @RequestBody @Validated ProductRequest request) {
-        productService.update(id, request);
+    public ProductResponse update(@PathVariable Integer id, @RequestBody @Validated ProductRequest request) {
+        ProductEntity updated = productService.update(id, request);
+        return ProductResponse.fromEntity(updated);
     }
-
 
     // 削除（論理削除）
     @DeleteMapping("/{id}")
