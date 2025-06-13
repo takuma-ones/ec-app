@@ -1,13 +1,10 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
-import { getCategories } from '@/lib/api/admin/categories'
 import { BackButton } from '@/components/ui/back-button'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -16,8 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { FolderOpen, Search, Plus, Eye, Edit, Trash2, Calendar } from 'lucide-react'
+import { getCategories } from '@/lib/api/admin/categories'
 import type { CategoryResponse } from '@/types/admin/category'
+import { Calendar, Eye, FolderOpen, Plus, Search } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<CategoryResponse[]>([])
