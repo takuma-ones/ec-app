@@ -1,69 +1,46 @@
 'use client'
 
 import type React from 'react'
-
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Home, LayoutDashboard } from 'lucide-react'
+import { ArrowLeft, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type BackButtonProps = {
   /**
    * ボタンの動作バリアント
-   * - 'back': 一つ前の画面に戻る (router.back())
-   * - 'dashboard': 常にダッシュボードに戻る
-   * - 'smart': 履歴がある場合は戻る、ない場合はトップページへ
+   * - 'back': 一つ前の画面に戻る
+   * - 'smart': 履歴があれば戻る、なければトップへ
+   * - 'custom': 任意のパスへ遷移
    */
-  variant?: 'back' | 'dashboard' | 'smart'
-  /**
-   * ボタンのテキスト
-   */
+  variant?: 'back' | 'smart' | 'custom'
+
+  /** ボタンの表示テキスト */
   children?: React.ReactNode
-  /**
-   * ダッシュボードのパス
-   */
-  dashboardPath?: string
-  /**
-   * トップページのパス
-   */
+
+  /** smartのときのホームパス（履歴がないときに使う） */
   homePath?: string
-  /**
-   * 追加のCSSクラス
-   */
+
+  /** customのときの遷移先パス */
+  customPath?: string
+
+  /** 追加のCSSクラス */
   className?: string
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
 
-/**
- * 戻るボタンコンポーネント
- *
- * 使用例:
- * ```tsx
- * // 一つ前に戻る
- * <BackButton variant="back">戻る</BackButton>
- *
- * // ダッシュボードに戻る
- * <BackButton variant="dashboard">ダッシュボードへ</BackButton>
- *
- * // スマート戻る（履歴がなければトップへ）
- * <BackButton variant="smart">戻る</BackButton>
- * ```
- */
 export function BackButton({
   variant = 'back',
   children,
-  dashboardPath = '/admin/dashboard',
   homePath = '/admin',
+  customPath = '/',
   className,
   ...props
 }: BackButtonProps) {
   const router = useRouter()
   const [hasHistory, setHasHistory] = useState(false)
 
-  // マウント時に履歴があるかチェック
   useEffect(() => {
-    // window.history.lengthが2以上なら履歴がある
-    // または document.referrer が存在する場合も履歴あり
     setHasHistory(window.history.length > 1 || !!document.referrer)
   }, [])
 
@@ -72,9 +49,6 @@ export function BackButton({
       case 'back':
         router.back()
         break
-      case 'dashboard':
-        router.push(dashboardPath)
-        break
       case 'smart':
         if (hasHistory) {
           router.back()
@@ -82,10 +56,12 @@ export function BackButton({
           router.push(homePath)
         }
         break
+      case 'custom':
+        router.push(customPath)
+        break
     }
   }
 
-  // バリアントに応じたアイコンとテキストを設定
   const getButtonContent = () => {
     switch (variant) {
       case 'back':
@@ -93,13 +69,6 @@ export function BackButton({
           <>
             <ArrowLeft className="mr-2 h-4 w-4" />
             {children || '戻る'}
-          </>
-        )
-      case 'dashboard':
-        return (
-          <>
-            <LayoutDashboard className="mr-2 h-4 w-4" />
-            {children || 'ダッシュボードへ'}
           </>
         )
       case 'smart':
@@ -111,6 +80,13 @@ export function BackButton({
               <Home className="mr-2 h-4 w-4" />
             )}
             {children || (hasHistory ? '戻る' : 'トップへ')}
+          </>
+        )
+      case 'custom':
+        return (
+          <>
+            <Home className="mr-2 h-4 w-4" />
+            {children || 'ページへ'}
           </>
         )
     }

@@ -63,7 +63,7 @@ export default function CreateCategoryPage() {
       {/* ヘッダー */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <BackButton variant="back" />
+          <BackButton variant="custom" customPath="/admin/categories" />
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
               <FolderOpen className="w-8 h-8 text-orange-500" />

@@ -71,7 +71,7 @@ export default function UserDetailPage() {
     return (
       <div className="p-6 space-y-6">
         <div className="flex items-center gap-4">
-          <BackButton variant="back" />
+          <BackButton variant="custom" customPath="/admin/users" />
           <h1 className="text-2xl font-bold text-gray-900">ユーザーが見つかりません</h1>
         </div>
         <Card>
@@ -90,7 +90,7 @@ export default function UserDetailPage() {
       {/* ヘッダー */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <BackButton variant="back" />
+          <BackButton variant="custom" customPath="/admin/users" />
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
               <User className="w-8 h-8 text-blue-500" />

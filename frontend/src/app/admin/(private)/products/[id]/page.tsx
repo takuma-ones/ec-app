@@ -182,7 +182,7 @@ export default function AdminProductDetailPage() {
     return (
       <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
         <div className="flex items-center gap-4">
-          <BackButton variant="back" />
+          <BackButton variant="custom" customPath="/admin/products" />
           <h1 className="text-2xl font-bold text-gray-900">商品が見つかりません</h1>
         </div>
         <Card>
@@ -201,7 +201,7 @@ export default function AdminProductDetailPage() {
       {/* ヘッダー */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <BackButton variant="back" />
+          <BackButton variant="custom" customPath="/admin/dashboard" />
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
               <Package className="w-8 h-8 text-purple-500" />
