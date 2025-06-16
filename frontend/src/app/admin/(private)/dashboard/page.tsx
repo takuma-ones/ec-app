@@ -1,44 +1,34 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getCategories } from '@/lib/api/admin/categories'
 import { getProducts } from '@/lib/api/admin/products'
 import { getUsers } from '@/lib/api/admin/users'
 import {
-  Users,
-  Package,
-  FolderOpen,
-  TrendingUp,
-  ShoppingCart,
-  DollarSign,
   Activity,
-  Eye,
-  Plus,
   ArrowUpRight,
   Calendar,
-  Clock,
+  DollarSign,
+  Eye,
+  FolderOpen,
+  Package,
+  Plus,
+  ShoppingCart,
+  TrendingUp,
+  Users,
 } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 // 静的データ
 const staticData = {
-  userCount: 1247,
-  productCount: 89,
-  categoryCount: 12,
   totalSales: 2847500,
   monthlyGrowth: 12.5,
   todayOrders: 23,
   pendingOrders: 7,
-  recentActivities: [
-    { id: 1, action: '新規ユーザー登録', user: '田中太郎', time: '5分前', type: 'user' },
-    { id: 2, action: '商品購入', user: '佐藤花子', time: '12分前', type: 'order' },
-    { id: 3, action: '商品追加', user: '管理者', time: '1時間前', type: 'product' },
-    { id: 4, action: 'カテゴリ更新', user: '管理者', time: '2時間前', type: 'category' },
-    { id: 5, action: '新規ユーザー登録', user: '山田次郎', time: '3時間前', type: 'user' },
-  ],
+
   topProducts: [
     { id: 1, name: 'ワイヤレスイヤホン', sales: 156, revenue: 234000 },
     { id: 2, name: 'スマートウォッチ', sales: 89, revenue: 445000 },
@@ -54,32 +44,21 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // 実際のAPIコールの代わりに静的データを設定
-      setTimeout(() => {
-        setUserCount(staticData.userCount)
-        setProductCount(staticData.productCount)
-        setCategoryCount(staticData.categoryCount)
+      try {
+        const fetchedUser = await getUsers()
+        const fetchedProducts = await getProducts()
+        const fetchedCategories = await getCategories()
+        setUserCount(fetchedUser.length)
+        setProductCount(fetchedProducts.length)
+        setCategoryCount(fetchedCategories.length)
         setIsLoading(false)
-      }, 1000)
+      } catch (error) {
+        console.error('取得エラー:', error)
+      }
     }
 
     fetchData()
   }, [])
-
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'user':
-        return <Users className="w-4 h-4 text-blue-500" />
-      case 'order':
-        return <ShoppingCart className="w-4 h-4 text-green-500" />
-      case 'product':
-        return <Package className="w-4 h-4 text-purple-500" />
-      case 'category':
-        return <FolderOpen className="w-4 h-4 text-orange-500" />
-      default:
-        return <Activity className="w-4 h-4 text-gray-500" />
-    }
-  }
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ja-JP', {
@@ -147,10 +126,7 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900">{productCount}</div>
-              <p className="text-xs text-green-600 flex items-center mt-1">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                +5 今月追加
-              </p>
+              <p className="text-xs text-gray-9s00 flex items-center mt-1">アクティブ商品</p>
             </CardContent>
           </Card>
         </Link>
