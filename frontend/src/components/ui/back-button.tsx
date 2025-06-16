@@ -1,11 +1,11 @@
 'use client'
 
-import type React from 'react'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ArrowLeft, Home } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import type React from 'react'
+import { useEffect, useState } from 'react'
 
 type BackButtonProps = {
   /**
@@ -85,8 +85,8 @@ export function BackButton({
       case 'custom':
         return (
           <>
-            <Home className="mr-2 h-4 w-4" />
-            {children || 'ページへ'}
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {children || '戻る'}
           </>
         )
     }
