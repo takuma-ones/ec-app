@@ -20,7 +20,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { getCategories } from '@/lib/api/admin/categories'
 import { getProducts } from '@/lib/api/admin/products'
+import type { CategoryResponse } from '@/types/admin/category'
 import type { ProductResponse } from '@/types/admin/product'
 import { AlertTriangle, Eye, Filter, Package, Plus, Search, TrendingUp } from 'lucide-react'
 import Image from 'next/image'
@@ -37,20 +39,23 @@ export default function AdminProductsPage() {
   )
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
+  const [categories, setCategories] = useState<CategoryResponse[]>([])
+  const [categoryFilter, setCategoryFilter] = useState<string>('all')
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getProducts()
-        setProducts(data)
+        const [productsData, categoriesData] = await Promise.all([getProducts(), getCategories()])
+        setProducts(productsData)
+        setCategories(categoriesData)
       } catch (error) {
-        console.error('商品の取得に失敗しました:', error)
+        console.error('データの取得に失敗しました:', error)
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchProducts()
+    fetchData()
   }, [])
 
   // フィルタリング
@@ -72,9 +77,13 @@ export default function AdminProductsPage() {
         (stockFilter === 'low-stock' && product.stock > 0 && product.stock <= 10) ||
         (stockFilter === 'out-of-stock' && product.stock === 0)
 
-      return matchesSearch && matchesStatus && matchesStock
+      const matchesCategory =
+        categoryFilter === 'all' ||
+        product.productCategories.some((cat) => cat.id.toString() === categoryFilter)
+
+      return matchesSearch && matchesStatus && matchesStock && matchesCategory
     })
-  }, [products, searchTerm, statusFilter, stockFilter])
+  }, [products, searchTerm, statusFilter, stockFilter, categoryFilter])
 
   // ページネーション
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
@@ -216,6 +225,23 @@ export default function AdminProductsPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-4">
+              <Select
+                value={categoryFilter}
+                onValueChange={(value: string) => setCategoryFilter(value)}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="カテゴリー" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">すべてのカテゴリー</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id.toString()}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               <Select
                 value={statusFilter}
                 onValueChange={(value: 'all' | 'published' | 'draft') => setStatusFilter(value)}
