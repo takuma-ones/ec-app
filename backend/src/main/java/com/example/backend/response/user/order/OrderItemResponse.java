@@ -1,21 +1,20 @@
 package com.example.backend.response.user.order;
 
 import com.example.backend.entity.OrderItemEntity;
+import com.example.backend.response.admin.product.ProductResponse;
 
 public record OrderItemResponse(
         Integer id,
-        Integer productId,
-        String productName,
         Integer quantity,
-        Integer price
+        Integer price,
+        ProductResponse product
 ) {
     public static OrderItemResponse fromEntity(OrderItemEntity entity) {
         return new OrderItemResponse(
                 entity.getId(),
-                entity.getProduct().getId(),
-                entity.getProduct().getName(),
                 entity.getQuantity(),
-                entity.getPrice()
+                entity.getPrice(),
+                ProductResponse.fromEntity(entity.getProduct())
         );
     }
 }
