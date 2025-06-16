@@ -24,6 +24,9 @@ import { useEffect, useState } from 'react'
 
 // 静的データ
 const staticData = {
+  userCount: 0,
+  productCount: 0,
+  categoryCount: 0,
   totalSales: 2847500,
   monthlyGrowth: 12.5,
   todayOrders: 23,
