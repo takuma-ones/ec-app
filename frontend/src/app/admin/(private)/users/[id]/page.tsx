@@ -1,27 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
-import { BackButton } from '@/components/ui/back-button'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { BackButton } from '@/components/ui/back-button'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { User, Mail, Phone, MapPin, Edit, Trash2 } from 'lucide-react'
-import type { UserResponse } from '@/types/admin/user'
 import { getUser } from '@/lib/api/admin/users'
+import type { UserResponse } from '@/types/admin/user'
+import { Mail, MapPin, Phone, User } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function UserDetailPage() {
   const params = useParams()
@@ -61,11 +49,6 @@ export default function UserDetailPage() {
       .map((n) => n[0])
       .join('')
       .toUpperCase()
-  }
-
-  const handleDelete = () => {
-    // 削除処理をここに実装
-    console.log('ユーザーを削除:', user?.id)
   }
 
   if (isLoading) {

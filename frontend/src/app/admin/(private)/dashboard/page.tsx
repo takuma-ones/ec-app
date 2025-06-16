@@ -5,6 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
+import { getCategories } from '@/lib/api/admin/categories'
+import { getProducts } from '@/lib/api/admin/products'
+import { getUsers } from '@/lib/api/admin/users'
 import {
   Users,
   Package,
@@ -276,51 +279,6 @@ export default function AdminDashboardPage() {
 
         {/* 最近のアクティビティと売上商品 */}
         <div className="lg:col-span-2 space-y-6">
-          {/* 最近のアクティビティ */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                最近のアクティビティ
-              </CardTitle>
-              <CardDescription>システム内の最新の動き</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {staticData.recentActivities.map((activity) => {
-                  const getDetailLink = (type: string) => {
-                    switch (type) {
-                      case 'user':
-                        return '/admin/users/1'
-                      case 'product':
-                        return '/admin/products/1'
-                      case 'category':
-                        return '/admin/categories/1'
-                      default:
-                        return '#'
-                    }
-                  }
-
-                  return (
-                    <Link key={activity.id} href={getDetailLink(activity.type)} className="block">
-                      <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                        {getActivityIcon(activity.type)}
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                          <p className="text-xs text-gray-500">ユーザー: {activity.user}</p>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-xs text-gray-400">{activity.time}</span>
-                          <ArrowUpRight className="w-3 h-3 text-gray-400 ml-1" />
-                        </div>
-                      </div>
-                    </Link>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
           {/* 売上上位商品 */}
           <Card>
             <CardHeader>

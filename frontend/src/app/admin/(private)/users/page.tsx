@@ -21,9 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import axios from '@/lib/axios'
+import { getUsers } from '@/lib/api/admin/users'
 import type { UserResponse } from '@/types/admin/user/response'
-import { getCookie } from 'cookies-next'
 import { Calendar, Eye, Filter, Mail, MapPin, Phone, Plus, Search, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
@@ -39,16 +38,10 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = getCookie('admin-token')
-
-        const response = await axios.get<UserResponse[]>('/admin/users', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        setUsers(response.data)
-      } catch (err) {
-        console.error('API取得エラー:', err)
+        const fetchedUser = await getUsers()
+        setUsers(fetchedUser)
+      } catch (error) {
+        console.error('ユーザー取得エラー:', error)
       }
     }
 
