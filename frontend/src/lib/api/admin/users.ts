@@ -6,7 +6,6 @@ import { UserResponse } from '@/types/admin/user'
 
 const getAuthHeader = () => {
   const token = getCookie('admin-token')
-  console.log('admin-token:', token)
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
