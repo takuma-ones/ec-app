@@ -152,7 +152,7 @@ export default function ProductListPage() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 items-center">
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="w-48 h-12">
                     <Filter className="w-4 h-4 mr-2" />
