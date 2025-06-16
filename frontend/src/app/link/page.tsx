@@ -2,27 +2,29 @@
 
 import type React from 'react'
 
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  Users,
-  Package,
-  FolderOpen,
-  ShoppingBag,
-  Shield,
-  LayoutDashboard,
-  Eye,
-  Plus,
   ExternalLink,
-  Home,
-  User,
+  Eye,
   FileText,
-  Layers,
-  ShoppingCart,
+  FolderOpen,
   History,
+  Home,
+  Layers,
+  LayoutDashboard,
+  Package,
+  Plus,
+  Shield,
+  ShoppingBag,
+  ShoppingCart,
+  User,
+  Users,
 } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 interface PageLink {
   title: string
@@ -190,6 +192,18 @@ const pageLinks: PageLink[] = [
 const categories = Array.from(new Set(pageLinks.map((link) => link.category)))
 
 export default function LinkPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') {
+      router.replace('/') // 本番環境ではトップへリダイレクト
+    }
+  }, [])
+
+  if (process.env.NODE_ENV !== 'development') {
+    return null // リダイレクト中は何も表示しない
+  }
+
   const getStatusBadge = (status?: string) => {
     switch (status) {
       case 'public':
