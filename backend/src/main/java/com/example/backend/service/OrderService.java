@@ -69,13 +69,23 @@ public class OrderService {
         order.setShippingAddress(request.shippingAddress());
         order.setStatus(OrderStatus.PAID); // 決済なしなので即PAIDでOK
 
-        // 6. OrderItem作成
+        // 6. OrderItem作成 + 在庫チェック
         Set<OrderItemEntity> orderItems = new HashSet<>();
         for (CartItemEntity cartItem : cartItems) {
+            int requestedQuantity = cartItem.getQuantity();
+            int availableStock = cartItem.getProduct().getStock();
+
+            // 在庫不足チェック
+            if (requestedQuantity > availableStock) {
+                throw new RuntimeException("在庫が不足しています。商品: " + cartItem.getProduct().getName()
+                        + "（在庫: " + availableStock + ", リクエスト: " + requestedQuantity + "）");
+            }
+
+            // OrderItem作成
             OrderItemEntity orderItem = new OrderItemEntity();
             orderItem.setOrder(order);
             orderItem.setProduct(cartItem.getProduct());
-            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setQuantity(requestedQuantity);
             orderItem.setPrice(cartItem.getProduct().getPrice());
             orderItems.add(orderItem);
         }
@@ -87,7 +97,7 @@ public class OrderService {
         // 8. カート内アイテム削除（物理削除）
         cartItemRepository.deleteAll(cartItems);
 
-        // 9. OrderResponse作成して返す（実装例）
+        // 9. OrderResponse作成して返す
         return OrderResponse.fromEntity(order);
     }
 
@@ -99,5 +109,4 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Order not found with id: " + orderId + " for user: " + userId));
     }
-
 }
