@@ -9,7 +9,6 @@ import com.example.backend.repository.CartRepository;
 import com.example.backend.repository.ProductRepository;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,9 +49,17 @@ public class CartService {
 
         // 既に同じ商品がカートにある場合は数量を加算
         Optional<CartItemEntity> existingItemOpt = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId);
+        int currentQuantity = existingItemOpt.map(CartItemEntity::getQuantity).orElse(0);
+        int newTotalQuantity = currentQuantity + quantity;
+
+        // 在庫より多い場合はエラー
+        if (newTotalQuantity > product.getStock()) {
+            throw new IllegalArgumentException("指定された数量が在庫を超えています。現在の在庫: " + product.getStock());
+        }
+
         if (existingItemOpt.isPresent()) {
             CartItemEntity item = existingItemOpt.get();
-            item.setQuantity(item.getQuantity() + quantity);
+            item.setQuantity(newTotalQuantity);
             cartItemRepository.save(item);
         } else {
             CartItemEntity item = new CartItemEntity();
@@ -80,6 +87,14 @@ public class CartService {
         CartItemEntity item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
 
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // 在庫チェック
+        if (newQuantity > product.getStock()) {
+            throw new IllegalArgumentException("指定された数量が在庫を超えています。現在の在庫: " + product.getStock());
+        }
+
         item.setQuantity(newQuantity);
         cartItemRepository.save(item);
 
@@ -100,7 +115,5 @@ public class CartService {
         return cartRepository.findById(cart.getId())
                 .orElseThrow(() -> new RuntimeException("Cart not found after item deletion"));
     }
-
-
 
 }
