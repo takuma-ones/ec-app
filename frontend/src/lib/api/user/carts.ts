@@ -23,7 +23,7 @@ export const addCartItem = async (data: addCartItemRequest): Promise<CartRespons
   return response.data
 }
 
-export const updateCartItem = async (
+export const updateCartItemQuantity = async (
   productId: number,
   data: updateCartItemRequest
 ): Promise<CartResponse> => {
@@ -33,7 +33,7 @@ export const updateCartItem = async (
   return response.data
 }
 
-export const deleteCartItem = async (productId: number): Promise<CartResponse> => {
+export const removeCartItem = async (productId: number): Promise<CartResponse> => {
   const response = await axios.delete<CartResponse>(`/user/carts/items/${productId}`, {
     headers: getAuthHeader(),
   })

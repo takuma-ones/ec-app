@@ -1,6 +1,8 @@
 export type CartResponse = {
   cartItems: CartItem[]
   id: number
+  totalPrice: number
+  totalQuantity: number
   userId: number
 }
 
