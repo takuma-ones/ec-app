@@ -274,7 +274,7 @@ export default function CartPage() {
                             <AlertDialogFooter>
                               <AlertDialogCancel>キャンセル</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleRemoveItem(item.id)}
+                                onClick={() => handleRemoveItem(item.product.id)}
                                 className="bg-red-600 hover:bg-red-700"
                               >
                                 削除する
