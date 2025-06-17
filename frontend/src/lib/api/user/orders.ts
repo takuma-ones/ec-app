@@ -24,7 +24,7 @@ export const getOrderById = async (oderId: number): Promise<OrderResponse> => {
 }
 
 export const createOrder = async (data: CheckoutRequest): Promise<OrderResponse[]> => {
-  const response = await axios.post<OrderResponse[]>('/user/orders', data, {
+  const response = await axios.post<OrderResponse[]>('/user/orders/checkout', data, {
     headers: getAuthHeader(),
   })
   return response.data
