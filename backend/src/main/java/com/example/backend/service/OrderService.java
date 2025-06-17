@@ -1,6 +1,17 @@
 package com.example.backend.service;
 
-import com.example.backend.entity.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.backend.entity.CartEntity;
+import com.example.backend.entity.CartItemEntity;
+import com.example.backend.entity.OrderEntity;
+import com.example.backend.entity.OrderItemEntity;
+import com.example.backend.entity.UserEntity;
 import com.example.backend.enums.OrderStatus;
 import com.example.backend.repository.CartItemRepository;
 import com.example.backend.repository.CartRepository;
@@ -8,14 +19,9 @@ import com.example.backend.repository.OrderRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.request.user.order.OrderCreateRequest;
 import com.example.backend.response.user.order.OrderResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
@@ -33,7 +39,6 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return orderRepository.findByUserOrderByCreatedAtDesc(user);
     }
-
 
     // 決済
     public OrderResponse createOrderFromCart(Integer userId, OrderCreateRequest request) {
@@ -62,7 +67,7 @@ public class OrderService {
         order.setUser(user);
         order.setTotalAmount(totalAmount);
         order.setShippingAddress(request.shippingAddress());
-        order.setStatus(OrderStatus.PAID);  // 決済なしなので即PAIDでOK
+        order.setStatus(OrderStatus.PAID); // 決済なしなので即PAIDでOK
 
         // 6. OrderItem作成
         Set<OrderItemEntity> orderItems = new HashSet<>();
@@ -86,5 +91,13 @@ public class OrderService {
         return OrderResponse.fromEntity(order);
     }
 
+    public OrderEntity findOrderByIdAndUserId(Integer orderId, Integer userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        return orderRepository.findByIdAndUser(orderId, user)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Order not found with id: " + orderId + " for user: " + userId));
+    }
 
 }

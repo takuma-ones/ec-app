@@ -33,6 +33,16 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Integer orderId) {
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer userId = loginUser.getId();
+
+        OrderEntity order = orderService.findOrderByIdAndUserId(orderId, userId);
+        OrderResponse response = OrderResponse.fromEntity(order);
+        return ResponseEntity.ok(response);
+    }
+
     // 購入
     @PostMapping("/checkout")
     public ResponseEntity<OrderResponse> checkout(@RequestBody OrderCreateRequest request) {
