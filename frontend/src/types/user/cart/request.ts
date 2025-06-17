@@ -1,5 +1,5 @@
 export type addCartItemRequest = {
-  productId: string
+  productId: number
   quantity: number
 }
 

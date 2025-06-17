@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { getProductById } from '@/lib/api/user/products'
@@ -24,16 +24,24 @@ import {
   Check,
 } from 'lucide-react'
 import type { ProductResponse } from '@/types/user/product'
+import { getCookie } from 'cookies-next'
+import { addCartItem } from '@/lib/api/user/carts'
 
 export default function ProductDetailPage() {
+  const router = useRouter()
   const params = useParams()
   const [product, setProduct] = useState<ProductResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [isAddedToCart, setIsAddedToCart] = useState(false)
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [userToken, setUserToken] = useState<string | null | undefined>(undefined)
 
   useEffect(() => {
+    const token = getCookie('user-token')
+    setUserToken(typeof token === 'string' ? token : null)
+
     const fetchProduct = async () => {
       try {
         const id = Number.parseInt(params.id as string)
@@ -66,10 +74,31 @@ export default function ProductDetailPage() {
     })
   }
 
-  const handleAddToCart = () => {
-    // カートに追加する処理
-    setIsAddedToCart(true)
-    setTimeout(() => setIsAddedToCart(false), 2000)
+  const handleAddToCart = async () => {
+    if (!userToken) {
+      router.push('/user/login')
+      return
+    }
+    if (!product) return
+
+    setIsAddingToCart(true)
+    try {
+      await addCartItem({
+        productId: product.id,
+        quantity,
+      })
+
+      setIsAddedToCart(true)
+
+      // 2秒後にアニメーションをリセット
+      setTimeout(() => {
+        setIsAddedToCart(false)
+      }, 2000)
+    } catch (error) {
+      console.error('カートへの追加に失敗しました:', error)
+    } finally {
+      setIsAddingToCart(false)
+    }
   }
 
   const handleQuantityChange = (change: number) => {
@@ -228,9 +257,14 @@ export default function ProductDetailPage() {
                 size="lg"
                 className="w-full h-12"
                 onClick={handleAddToCart}
-                disabled={product.stock === 0 || isAddedToCart}
+                disabled={product.stock === 0 || isAddingToCart}
               >
-                {isAddedToCart ? (
+                {isAddingToCart ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    カートに追加中...
+                  </div>
+                ) : isAddedToCart ? (
                   <>
                     <Check className="w-5 h-5 mr-2" />
                     カートに追加しました

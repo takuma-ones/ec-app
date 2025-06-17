@@ -1,13 +1,9 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { getProducts } from '@/lib/api/user/products'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -15,28 +11,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { addCartItem } from '@/lib/api/user/carts'
+import { getProducts } from '@/lib/api/user/products'
+import type { ProductResponse } from '@/types/user/product'
+import { getCookie } from 'cookies-next'
 import {
-  Search,
-  ShoppingCart,
+  Check,
   Filter,
   Grid3X3,
-  List,
   Heart,
+  List,
   Package,
-  Truck,
+  Search,
   Shield,
+  ShoppingCart,
+  Truck,
 } from 'lucide-react'
-import type { ProductResponse } from '@/types/user/product'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function ProductListPage() {
+  const router = useRouter()
   const [products, setProducts] = useState<ProductResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<string>('name')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [addingToCart, setAddingToCart] = useState<Set<number>>(new Set())
+  const [addedToCart, setAddedToCart] = useState<Set<number>>(new Set())
+  const [userToken, setUserToken] = useState<string | null | undefined>(undefined)
 
   useEffect(() => {
+    const token = getCookie('user-token')
+    setUserToken(typeof token === 'string' ? token : null)
+
     const fetchProducts = async () => {
       try {
         const data = await getProducts()
@@ -90,6 +101,41 @@ export default function ProductListPage() {
 
   const formatPrice = (price: number) => {
     return price.toLocaleString()
+  }
+
+  const handleAddToCart = async (productId: number) => {
+    if (!userToken) {
+      router.push('/user/login')
+      return
+    }
+
+    setAddingToCart((prev) => new Set(prev).add(productId))
+
+    try {
+      await addCartItem({
+        productId,
+        quantity: 1,
+      })
+
+      setAddedToCart((prev) => new Set(prev).add(productId))
+
+      // 2秒後にアニメーションをリセット
+      setTimeout(() => {
+        setAddedToCart((prev) => {
+          const newSet = new Set(prev)
+          newSet.delete(productId)
+          return newSet
+        })
+      }, 2000)
+    } catch (error) {
+      console.error('カートへの追加に失敗しました:', error)
+    } finally {
+      setAddingToCart((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(productId)
+        return newSet
+      })
+    }
   }
 
   if (isLoading) {
@@ -300,9 +346,31 @@ export default function ProductListPage() {
                         詳細を見る
                       </Button>
                     </Link>
-                    <Button className="flex-1" disabled={product.stock === 0}>
+                    {/* <Button className="flex-1" disabled={product.stock === 0}>
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       カートに追加
+                    </Button> */}
+                    <Button
+                      className="flex-1"
+                      disabled={product.stock === 0 || addingToCart.has(product.id)}
+                      onClick={() => handleAddToCart(product.id)}
+                    >
+                      {addingToCart.has(product.id) ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          追加中...
+                        </div>
+                      ) : addedToCart.has(product.id) ? (
+                        <>
+                          <Check className="w-4 h-4 mr-2" />
+                          追加済み
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="w-4 h-4 mr-2" />
+                          カートに追加
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
