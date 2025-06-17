@@ -9,8 +9,15 @@ const getAuthHeader = () => {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-export const getOrder = async (): Promise<OrderResponse[]> => {
+export const getOrders = async (): Promise<OrderResponse[]> => {
   const response = await axios.get<OrderResponse[]>('/user/orders', {
+    headers: getAuthHeader(),
+  })
+  return response.data
+}
+
+export const getOrderById = async (oderId: number): Promise<OrderResponse> => {
+  const response = await axios.get<OrderResponse>(`/user/orders/${oderId}`, {
     headers: getAuthHeader(),
   })
   return response.data

@@ -164,7 +164,7 @@ const pageLinks: PageLink[] = [
   {
     title: '注文履歴',
     description: '過去の注文履歴一覧',
-    href: '/user/order',
+    href: '/user/orders',
     icon: History,
     category: 'ユーザー',
     status: 'public',
@@ -172,7 +172,7 @@ const pageLinks: PageLink[] = [
   {
     title: '注文詳細',
     description: '個別注文の詳細情報',
-    href: '/user/order/1',
+    href: '/user/orders/1',
     icon: Eye,
     category: 'ユーザー',
     status: 'public',
