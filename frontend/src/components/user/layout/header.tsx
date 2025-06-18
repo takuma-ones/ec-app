@@ -7,8 +7,15 @@ import { Badge } from '@/components/ui/badge'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { ShoppingCart } from 'lucide-react'
+import { LogOut, Settings, ShoppingCart, User } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 export default function UserHeader() {
   const router = useRouter()
@@ -39,18 +46,6 @@ export default function UserHeader() {
       </h1>
       {!['/user/login', '/user/signup'].includes(pathname) && (
         <div className="flex items-center gap-4">
-          {/* ログイン/ログアウトボタン（userToken が undefined（まだ読み込み中）の間は非表示） */}
-          {userToken !== undefined &&
-            (userToken ? (
-              <Button onClick={handleLogout} variant="destructive">
-                ログアウト
-              </Button>
-            ) : (
-              <Button onClick={handleLogin} variant="default">
-                ログイン
-              </Button>
-            ))}
-
           {/* カートアイコン（ログイン・サインアップページでは非表示） */}
           <Link href="/user/cart" className="relative">
             <Button variant="ghost" size="sm" className="text-white hover:bg-slate-700 relative">
@@ -63,6 +58,44 @@ export default function UserHeader() {
               </Badge>
             </Button>
           </Link>
+
+          {/* ログイン/ログアウトボタン（userToken が undefined（まだ読み込み中）の間は非表示） */}
+          {userToken !== undefined &&
+            (userToken ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-white hover:bg-slate-700">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link href="/user/dashboard" className="flex items-center gap-2 cursor-pointer">
+                      <User className="w-4 h-4" />
+                      ダッシュボード
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/user/orders" className="flex items-center gap-2 cursor-pointer">
+                      <Settings className="w-4 h-4" />
+                      注文履歴
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    ログアウト
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={handleLogin} variant="default">
+                ログイン
+              </Button>
+            ))}
         </div>
       )}
     </header>

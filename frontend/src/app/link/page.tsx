@@ -177,6 +177,14 @@ const pageLinks: PageLink[] = [
     category: 'ユーザー',
     status: 'public',
   },
+  {
+    title: 'ユーザーダッシュボード',
+    description: 'ユーザー向けのメインダッシュボード',
+    href: '/user/dashboard',
+    icon: LayoutDashboard,
+    category: 'ユーザー',
+    status: 'public',
+  },
 
   // デモ・コンポーネント
   {
