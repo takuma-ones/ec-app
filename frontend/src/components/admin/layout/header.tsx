@@ -26,7 +26,7 @@ export default function AdminHeader() {
         管理者ダッシュボード
       </Link>
       {adminToken && (
-        <Button onClick={handleLogout} variant="destructive">
+        <Button onClick={handleLogout} variant="destructive" className="hover:bg-slate-700">
           ログアウト
         </Button>
       )}

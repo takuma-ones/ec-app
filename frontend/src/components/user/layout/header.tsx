@@ -92,7 +92,7 @@ export default function UserHeader() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={handleLogin} variant="default">
+              <Button onClick={handleLogin} variant="default" className="hover:bg-slate-700">
                 ログイン
               </Button>
             ))}
