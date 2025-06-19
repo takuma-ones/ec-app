@@ -1,15 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { getCart, updateCartItemQuantity, removeCartItem } from '@/lib/api/user/carts'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { useCart } from '@/context/CartContext'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,17 +11,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { useCart } from '@/context/CartContext'
+import { getCart } from '@/lib/api/user/carts'
+import type { CartItem, CartResponse } from '@/types/user/cart'
 import {
-  ShoppingCart,
-  Plus,
-  Minus,
-  Trash2,
   ArrowLeft,
   CreditCard,
-  Truck,
+  Minus,
+  Plus,
   Shield,
+  ShoppingCart,
+  Trash2,
+  Truck,
 } from 'lucide-react'
-import type { CartResponse, CartItem } from '@/types/user/cart'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function CartPage() {
   const router = useRouter()
