@@ -1,14 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { deleteCookie, getCookie } from 'cookies-next'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
-import { LogOut, Settings, ShoppingCart, User } from 'lucide-react'
-import { useCart } from '@/context/CartContext'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useCart } from '@/context/CartContext'
+import { deleteCookie, getCookie } from 'cookies-next'
+import { LogOut, Settings, ShoppingCart, User } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function UserHeader() {
   const router = useRouter()
   const pathname = usePathname()
   const [userToken, setUserToken] = useState<string | null | undefined>(undefined)
   // 静的なカート商品数（実際のアプリではAPIから取得）
-  const { totalQuantity } = useCart()
+  const { totalQuantity, resetCart } = useCart()
 
   useEffect(() => {
     const token = getCookie('user-token')
@@ -36,6 +35,7 @@ export default function UserHeader() {
   }
 
   const handleLogin = () => {
+    resetCart() // カートをリセット
     router.push('/user/login')
   }
 

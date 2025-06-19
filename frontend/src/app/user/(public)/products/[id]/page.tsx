@@ -1,31 +1,30 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import { getProductById } from '@/lib/api/user/products'
 import { BackButton } from '@/components/ui/back-button'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  ShoppingCart,
-  Heart,
-  Share2,
-  Package,
-  Truck,
-  Shield,
-  RotateCcw,
-  Plus,
-  Minus,
-  Check,
-} from 'lucide-react'
+import { useCart } from '@/context/CartContext'
+import { getProductById } from '@/lib/api/user/products'
 import type { ProductResponse } from '@/types/user/product'
 import { getCookie } from 'cookies-next'
-import { addCartItem } from '@/lib/api/user/carts'
+import {
+  Check,
+  Heart,
+  Minus,
+  Package,
+  Plus,
+  RotateCcw,
+  Share2,
+  Shield,
+  ShoppingCart,
+  Truck,
+} from 'lucide-react'
+import Image from 'next/image'
+import { notFound, useParams, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function ProductDetailPage() {
   const router = useRouter()
@@ -37,6 +36,7 @@ export default function ProductDetailPage() {
   const [isAddedToCart, setIsAddedToCart] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [userToken, setUserToken] = useState<string | null | undefined>(undefined)
+  const { addItemToCart } = useCart()
 
   useEffect(() => {
     const token = getCookie('user-token')
@@ -83,7 +83,7 @@ export default function ProductDetailPage() {
 
     setIsAddingToCart(true)
     try {
-      await addCartItem({
+      await addItemToCart({
         productId: product.id,
         quantity,
       })

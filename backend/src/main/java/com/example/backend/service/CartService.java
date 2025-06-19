@@ -31,6 +31,18 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("Cart not found with userId: " + userId));
     }
 
+    // カートアイテム数量を取得
+    public int sumCartItemQuantitiesByUserId(Integer userId) {
+        CartEntity cart = cartRepository.findByUserIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new RuntimeException("Cart not found with userId: " + userId));
+
+        List<CartItemEntity> items = cartItemRepository.findByCartId(cart.getId());
+
+        return items.stream()
+                .mapToInt(CartItemEntity::getQuantity)
+                .sum();
+    }
+
 
     // カートアイテム追加
     public CartEntity addItemToCart(Integer userId, Integer productId, Integer quantity) {

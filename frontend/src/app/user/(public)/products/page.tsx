@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { addCartItem } from '@/lib/api/user/carts'
+import { useCart } from '@/context/CartContext'
 import { getProducts } from '@/lib/api/user/products'
 import type { ProductResponse } from '@/types/user/product'
 import { getCookie } from 'cookies-next'
@@ -43,6 +43,7 @@ export default function ProductListPage() {
   const [addingToCart, setAddingToCart] = useState<Set<number>>(new Set())
   const [addedToCart, setAddedToCart] = useState<Set<number>>(new Set())
   const [userToken, setUserToken] = useState<string | null | undefined>(undefined)
+  const { addItemToCart } = useCart()
 
   useEffect(() => {
     const token = getCookie('user-token')
@@ -112,7 +113,7 @@ export default function ProductListPage() {
     setAddingToCart((prev) => new Set(prev).add(productId))
 
     try {
-      await addCartItem({
+      await addItemToCart({
         productId,
         quantity: 1,
       })
@@ -346,10 +347,6 @@ export default function ProductListPage() {
                         詳細を見る
                       </Button>
                     </Link>
-                    {/* <Button className="flex-1" disabled={product.stock === 0}>
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      カートに追加
-                    </Button> */}
                     <Button
                       className="flex-1"
                       disabled={product.stock === 0 || addingToCart.has(product.id)}

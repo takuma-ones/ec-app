@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
+import { useCart } from '@/context/CartContext'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,6 +38,7 @@ export default function CartPage() {
   const [cart, setCart] = useState<CartResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set())
+  const { updateCartItem, removeItemFromCart } = useCart()
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -58,7 +60,7 @@ export default function CartPage() {
 
     setUpdatingItems((prev) => new Set(prev).add(itemId))
     try {
-      const updatedCart = await updateCartItemQuantity(itemId, { quantity: newQuantity })
+      const updatedCart = await updateCartItem(itemId, { quantity: newQuantity })
       setCart(updatedCart)
     } catch (error) {
       console.error('数量の更新に失敗しました:', error)
@@ -74,7 +76,7 @@ export default function CartPage() {
   const handleRemoveItem = async (itemId: number) => {
     setUpdatingItems((prev) => new Set(prev).add(itemId))
     try {
-      const updatedCart = await removeCartItem(itemId)
+      const updatedCart = await removeItemFromCart(itemId)
       setCart(updatedCart)
     } catch (error) {
       console.error('商品の削除に失敗しました:', error)

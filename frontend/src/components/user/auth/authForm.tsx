@@ -1,20 +1,22 @@
 'use client'
 
-import type React from 'react'
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useCart } from '@/context/CartContext'
+import { loginUser, signUpUser } from '@/lib/api/user/auth'
+import { ValidationErrorResponse } from '@/types/common/validation'
+import { AxiosError } from 'axios'
+import { setCookie } from 'cookies-next'
 import { Eye, EyeOff, ShoppingBag } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { setCookie } from 'cookies-next'
-import { AxiosError } from 'axios'
-import { ValidationErrorResponse } from '@/types/common/validation'
-import { loginUser, signUpUser } from '@/lib/api/user/auth'
+import type React from 'react'
+import { useState } from 'react'
 
 export default function UserAuthForm() {
+  const { refreshCart } = useCart()
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showSignupPassword, setShowSignupPassword] = useState(false)
@@ -41,6 +43,7 @@ export default function UserAuthForm() {
     try {
       const res = await loginUser({ email, password })
       setCookie('user-token', res.token, { path: '/', maxAge: 60 * 60 })
+      await refreshCart()
       router.push('/user/products')
     } catch (error) {
       const axiosError = error as AxiosError<ValidationErrorResponse>
@@ -71,6 +74,7 @@ export default function UserAuthForm() {
       })
 
       setCookie('user-token', res.token, { path: '/', maxAge: 60 * 60 })
+      await refreshCart()
       router.push('/user/products')
     } catch (error) {
       const axiosError = error as AxiosError<ValidationErrorResponse>

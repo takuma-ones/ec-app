@@ -16,6 +16,13 @@ export const getCart = async (): Promise<CartResponse> => {
   return response.data
 }
 
+export const getMyCartItemsQuantity = async (): Promise<number> => {
+  const response = await axios.get<number>('/user/carts/quantity', {
+    headers: getAuthHeader(),
+  })
+  return response.data
+}
+
 export const addCartItem = async (data: addCartItemRequest): Promise<CartResponse> => {
   const response = await axios.post<CartResponse>('/user/carts', data, {
     headers: getAuthHeader(),

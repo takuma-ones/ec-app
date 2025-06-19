@@ -30,6 +30,15 @@ public class CartController {
         return CartResponse.fromEntity(cart);
     }
 
+    // カート内アイテムの数量取得
+    @GetMapping("/quantity")
+    public int getMyCartItemsQuantity() {
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer userId = loginUser.getId();
+
+        return cartService.sumCartItemQuantitiesByUserId(userId);
+    }
+
     // カートへのアイテム追加（ResponseEntityでステータス返却）
     @PostMapping
     public ResponseEntity<CartResponse> addCartItem(@RequestBody CartAddRequest request) {
