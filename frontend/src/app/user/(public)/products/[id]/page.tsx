@@ -141,7 +141,7 @@ export default function ProductDetailPage() {
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <BackButton variant="custom" customPath="/admin/products" className="mr-2" />
+            <BackButton variant="custom" customPath="/user/products" className="mr-2" />
             <span>商品一覧</span>
             <span>/</span>
             <span>{product.productCategories.map((cat) => cat.name).join(', ')}</span>

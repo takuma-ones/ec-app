@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { getOrders } from '@/lib/api/user/orders'
+import { BackButton } from '@/components/ui/back-button'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { ArrowLeft, Package, Eye, Calendar, MapPin } from 'lucide-react'
+import { getOrders } from '@/lib/api/user/orders'
 import type { OrderResponse } from '@/types/user/order'
+import { Calendar, Eye, MapPin, Package } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function OrderHistoryPage() {
   const [orders, setOrders] = useState<OrderResponse[]>([])
@@ -88,12 +89,7 @@ export default function OrderHistoryPage() {
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
-            <Link href="/user/products">
-              <Button variant="outline">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                商品一覧に戻る
-              </Button>
-            </Link>
+            <BackButton variant="back" className="mr-2" />
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
                 <Package className="w-8 h-8 text-purple-500" />

@@ -22,6 +22,7 @@ import {
   Mail,
 } from 'lucide-react'
 import type { OrderResponse } from '@/types/user/order'
+import { BackButton } from '@/components/ui/back-button'
 
 export default function OrderDetailPage() {
   const params = useParams()
@@ -165,12 +166,7 @@ export default function OrderDetailPage() {
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
-            <Link href="/user/orders">
-              <Button variant="outline">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                注文履歴に戻る
-              </Button>
-            </Link>
+            <BackButton variant="custom" customPath="/user/orders" className="mr-2" />
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
                 <Package className="w-8 h-8 text-purple-500" />

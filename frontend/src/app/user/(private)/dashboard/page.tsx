@@ -1,36 +1,34 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { getOrders } from '@/lib/api/user/orders'
-import { getCart } from '@/lib/api/user/carts'
-import { getProfile } from '@/lib/api/user/profile'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { getCart } from '@/lib/api/user/carts'
+import { getOrders } from '@/lib/api/user/orders'
+import { getProfile } from '@/lib/api/user/profile'
+import type { CartResponse } from '@/types/user/cart'
+import type { OrderResponse } from '@/types/user/order'
 import {
-  User,
-  Package,
-  ShoppingCart,
-  History,
-  TrendingUp,
-  DollarSign,
-  Eye,
   ArrowRight,
-  Heart,
-  Settings,
   Bell,
   CreditCard,
+  DollarSign,
+  Eye,
+  Heart,
+  History,
   MapPin,
+  Package,
+  Settings,
+  ShoppingCart,
   Star,
+  TrendingUp,
+  User,
 } from 'lucide-react'
-import type { OrderResponse } from '@/types/user/order'
-import type { CartResponse } from '@/types/user/cart'
-import { jwtDecode } from 'jwt-decode'
-import { getCookie } from 'cookies-next'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function UserDashboardPage() {
   const [orders, setOrders] = useState<OrderResponse[]>([])

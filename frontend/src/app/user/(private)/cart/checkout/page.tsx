@@ -2,20 +2,20 @@
 
 import type React from 'react'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import { getCart } from '@/lib/api/user/carts'
-import { createOrder } from '@/lib/api/user/orders'
+import { BackButton } from '@/components/ui/back-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { ArrowLeft, CreditCard, MapPin } from 'lucide-react'
+import { getCart } from '@/lib/api/user/carts'
+import { createOrder } from '@/lib/api/user/orders'
 import type { CartResponse } from '@/types/user/cart'
 import type { CheckoutRequest } from '@/types/user/order'
+import { CreditCard, MapPin } from 'lucide-react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -134,12 +134,7 @@ export default function CheckoutPage() {
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
-            <Link href="/user/cart">
-              <Button variant="outline">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                カートに戻る
-              </Button>
-            </Link>
+            <BackButton variant="custom" customPath="/user/cart" className="mr-2" />
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
                 <CreditCard className="w-8 h-8 text-green-500" />

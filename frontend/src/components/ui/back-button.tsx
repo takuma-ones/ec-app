@@ -32,7 +32,7 @@ type BackButtonProps = {
 export function BackButton({
   variant = 'back',
   children,
-  homePath = '/admin',
+  homePath = '/',
   customPath = '/',
   className,
   ...props

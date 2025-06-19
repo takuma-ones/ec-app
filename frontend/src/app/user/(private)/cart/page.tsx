@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { BackButton } from '@/components/ui/back-button'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -131,12 +132,7 @@ export default function CartPage() {
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center gap-4 mb-8">
-            <Link href="/user/products">
-              <Button variant="outline">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                商品一覧に戻る
-              </Button>
-            </Link>
+            <BackButton variant="custom" customPath="/user/products" className="mr-2" />
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
               <ShoppingCart className="w-8 h-8 text-blue-500" />
               ショッピングカート
@@ -164,12 +160,7 @@ export default function CartPage() {
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
-            <Link href="/user/products">
-              <Button variant="outline">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                商品一覧に戻る
-              </Button>
-            </Link>
+            <BackButton variant="custom" customPath="/user/products" className="mr-2" />
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
                 <ShoppingCart className="w-8 h-8 text-blue-500" />
