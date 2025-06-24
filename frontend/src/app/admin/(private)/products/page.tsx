@@ -30,6 +30,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 
 export default function AdminProductsPage() {
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
   const [products, setProducts] = useState<ProductResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -308,13 +309,30 @@ export default function AdminProductsPage() {
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
                             {product.productImages.length > 0 ? (
-                              <Image
-                                src={product.productImages[0].imageUrl || '/placeholder.svg'}
-                                alt={product.name}
-                                width={48}
-                                height={48}
-                                className="w-full h-full object-cover"
-                              />
+                              (() => {
+                                const imageUrl = product.productImages?.[0]?.imageUrl
+                                let fullImageUrl = '/placeholder.svg'
+
+                                try {
+                                  if (imageUrl) {
+                                    fullImageUrl = new URL(imageUrl, baseUrl).toString()
+                                    console.log('Full image URL:', fullImageUrl)
+                                  }
+                                } catch (error) {
+                                  console.error('Invalid image URL:', imageUrl, error)
+                                }
+
+                                return (
+                                  <Image
+                                    src={fullImageUrl}
+                                    alt={product.name}
+                                    width={48}
+                                    height={48}
+                                    className="w-full h-full object-cover"
+                                    unoptimized
+                                  />
+                                )
+                              })()
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
                                 <Package className="w-6 h-6 text-gray-400" />

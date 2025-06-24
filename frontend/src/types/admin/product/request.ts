@@ -11,5 +11,5 @@ export type ProductRequest = {
 
 export type Image = {
   sortOrder: number
-  url: string
+  base64: string
 }

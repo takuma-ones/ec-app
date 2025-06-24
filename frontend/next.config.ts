@@ -2,7 +2,15 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['example.com', 'upset-embossing.name', 'private-embossing.com'], // ★ 追加
+    domains: ['localhost', 'example.com', 'upset-embossing.name', 'private-embossing.com'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8080',
+        pathname: '/uploads/images/products/**',
+      },
+    ],
   },
 }
 

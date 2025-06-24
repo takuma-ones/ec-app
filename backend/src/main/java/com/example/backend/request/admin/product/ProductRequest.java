@@ -45,18 +45,18 @@ public record ProductRequest(
         }
 
         // 画像の関連づけ
-        if (images != null) {
-            Set<ProductImageEntity> productImages = images.stream()
-                    .map(imageReq -> {
-                        ProductImageEntity image = new ProductImageEntity();
-                        image.setProduct(product);
-                        image.setImageUrl(imageReq.url());
-                        image.setSortOrder(imageReq.sortOrder());
-                        return image;
-                    })
-                    .collect(Collectors.toSet());
-            product.setProductImages(productImages);
-        }
+//        if (images != null) {
+//            Set<ProductImageEntity> productImages = images.stream()
+//                    .map(imageReq -> {
+//                        ProductImageEntity image = new ProductImageEntity();
+//                        image.setProduct(product);
+//                        image.setImageUrl(imageReq.url());
+//                        image.setSortOrder(imageReq.sortOrder());
+//                        return image;
+//                    })
+//                    .collect(Collectors.toSet());
+//            product.setProductImages(productImages);
+//        }
 
         return product;
     }

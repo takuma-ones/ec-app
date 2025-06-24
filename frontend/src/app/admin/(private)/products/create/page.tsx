@@ -6,6 +6,7 @@ import { BackButton } from '@/components/ui/back-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import ImageUploader, { ImageItem } from '@/components/ui/ImageUploader'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -14,9 +15,10 @@ import { getCategories } from '@/lib/api/admin/categories'
 import { createProduct } from '@/lib/api/admin/products'
 import type { CategoryResponse } from '@/types/admin/category'
 import type { ProductRequest } from '@/types/admin/product'
-import { Package, Plus, Save, Upload, X } from 'lucide-react'
+import { Package, Plus, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 export default function CreateProductPage() {
   const router = useRouter()
@@ -33,6 +35,7 @@ export default function CreateProductPage() {
     categoryIds: [],
     images: [],
   })
+  const [images, setImages] = useState<ImageItem[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
@@ -49,6 +52,16 @@ export default function CreateProductPage() {
 
     fetchCategories()
   }, [])
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      images: images.map((img, index) => ({
+        sortOrder: index + 1,
+        base64: img.base64,
+      })),
+    }))
+  }, [images])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -115,24 +128,6 @@ export default function CreateProductPage() {
         categoryIds: formData.categoryIds.filter((id) => id !== categoryId),
       })
     }
-  }
-
-  const addImageUrl = () => {
-    const url = prompt('画像URLを入力してください:')
-    if (url) {
-      const newImage = {
-        url,
-        sortOrder: formData.images.length + 1,
-      }
-      setFormData({ ...formData, images: [...formData.images, newImage] })
-    }
-  }
-
-  const removeImage = (index: number) => {
-    const newImages = formData.images.filter((_, i) => i !== index)
-    // ソート順を再調整
-    const reorderedImages = newImages.map((img, i) => ({ ...img, sortOrder: i + 1 }))
-    setFormData({ ...formData, images: reorderedImages })
   }
 
   if (isLoadingCategories) {
@@ -305,59 +300,8 @@ export default function CreateProductPage() {
 
           {/* 商品画像 */}
           <Card>
-            <CardHeader>
-              <CardTitle>商品画像</CardTitle>
-              <CardDescription>商品の画像を追加してください（任意）</CardDescription>
-            </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <Button type="button" variant="outline" onClick={addImageUrl}>
-                  <Upload className="w-4 h-4 mr-2" />
-                  画像URLを追加
-                </Button>
-
-                {formData.images.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {formData.images.map((image, index) => (
-                      <div key={index} className="relative">
-                        <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                          <img
-                            src={image.url || '/placeholder.svg'}
-                            alt={`商品画像 ${index + 1}`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement
-                              target.src = '/placeholder.svg?height=200&width=200'
-                            }}
-                          />
-                        </div>
-                        <div className="absolute top-2 left-2">
-                          <span className="bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                            {image.sortOrder}
-                          </span>
-                        </div>
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-2 right-2"
-                          onClick={() => removeImage(index)}
-                        >
-                          <X className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {formData.images.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    <Package className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                    <p>画像が追加されていません</p>
-                    <p className="text-sm">「画像URLを追加」ボタンから画像を追加できます</p>
-                  </div>
-                )}
-              </div>
+              <ImageUploader value={images} onChange={setImages} />
             </CardContent>
           </Card>
 
@@ -373,14 +317,12 @@ export default function CreateProductPage() {
                   <div className="flex items-start gap-4">
                     <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
                       {formData.images.length > 0 ? (
-                        <img
-                          src={formData.images[0].url || '/placeholder.svg'}
-                          alt="プレビュー"
+                        <Image
+                          src={formData.images[0].base64 || '/placeholder.svg'}
+                          alt={'プレビュー画像'}
+                          width={100}
+                          height={100}
                           className="w-full h-full object-cover rounded-lg"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement
-                            target.src = '/placeholder.svg?height=80&width=80'
-                          }}
                         />
                       ) : (
                         <Package className="w-8 h-8 text-gray-400" />
