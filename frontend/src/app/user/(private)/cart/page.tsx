@@ -18,24 +18,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/context/CartContext'
 import { getCart } from '@/lib/api/user/carts'
+import { buildImageUrl } from '@/lib/utils'
 import type { CartItem, CartResponse } from '@/types/user/cart'
-import {
-  ArrowLeft,
-  CreditCard,
-  Minus,
-  Plus,
-  Shield,
-  ShoppingCart,
-  Trash2,
-  Truck,
-} from 'lucide-react'
+import { CreditCard, Minus, Plus, Shield, ShoppingCart, Trash2, Truck } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function CartPage() {
-  const router = useRouter()
   const [cart, setCart] = useState<CartResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set())
@@ -96,15 +86,6 @@ export default function CartPage() {
 
   const calculateSubtotal = (item: CartItem) => {
     return item.product.price * item.quantity
-  }
-
-  const getMainImage = (item: CartItem) => {
-    const sortedImages = item.product.productImages
-      .filter((img) => img.imageUrl)
-      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
-    return sortedImages.length > 0
-      ? sortedImages[0].imageUrl
-      : '/placeholder.svg?height=100&width=100'
   }
 
   if (isLoading) {
@@ -186,7 +167,7 @@ export default function CartPage() {
                     <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                       <div className="w-20 h-20 rounded-lg overflow-hidden bg-white">
                         <Image
-                          src={getMainImage(item) || '/placeholder.svg'}
+                          src={buildImageUrl(item.product.productImages[0]?.imageUrl)}
                           alt={item.product.name}
                           width={80}
                           height={80}
