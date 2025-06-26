@@ -17,6 +17,7 @@ import { CreditCard, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useCart } from '@/context/CartContext'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -25,6 +26,7 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [shippingAddress, setShippingAddress] = useState('')
   const [error, setError] = useState('')
+  const { refreshCart } = useCart()
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -67,6 +69,7 @@ export default function CheckoutPage() {
       }
 
       await createOrder(checkoutData)
+      refreshCart()
       router.push(`/user/orders/`)
     } catch (error) {
       console.error('注文の処理に失敗しました:', error)
