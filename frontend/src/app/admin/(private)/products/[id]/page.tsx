@@ -24,6 +24,7 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { getCategories } from '@/lib/api/admin/categories'
 import { deleteProduct, getProductById, updateProduct } from '@/lib/api/admin/products'
+import { buildImageUrl } from '@/lib/utils'
 import type { CategoryResponse } from '@/types/admin/category'
 import type { ProductRequest, ProductResponse } from '@/types/admin/product'
 import { Calendar, Edit, Eye, EyeOff, Hash, Package, Save, Trash2 } from 'lucide-react'
@@ -32,7 +33,6 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function AdminProductDetailPage() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
   const params = useParams()
   const router = useRouter()
   const [product, setProduct] = useState<ProductResponse | null>(null)
@@ -287,30 +287,14 @@ export default function AdminProductDetailPage() {
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
                   {product.productImages.length > 0 ? (
-                    (() => {
-                      const imageUrl = product.productImages?.[0]?.imageUrl
-                      let fullImageUrl = '/placeholder.svg'
-
-                      try {
-                        if (imageUrl) {
-                          fullImageUrl = new URL(imageUrl, baseUrl).toString()
-                          console.log('Full image URL:', fullImageUrl)
-                        }
-                      } catch (error) {
-                        console.error('Invalid image URL:', imageUrl, error)
-                      }
-
-                      return (
-                        <Image
-                          src={fullImageUrl}
-                          alt={product.name}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover"
-                          unoptimized
-                        />
-                      )
-                    })()
+                    <Image
+                      src={buildImageUrl(product.productImages[0]?.imageUrl)}
+                      alt={product.name}
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-cover"
+                      unoptimized
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Package className="w-8 h-8 text-gray-400" />
@@ -482,22 +466,10 @@ export default function AdminProductDetailPage() {
                     .slice() // 元の配列を破壊しない
                     .sort((a, b) => a.sortOrder - b.sortOrder) // sortOrder 昇順
                     .map((image) => {
-                      const imageUrl = image.imageUrl
-                      let fullImageUrl = '/placeholder.svg'
-
-                      try {
-                        if (imageUrl) {
-                          fullImageUrl = new URL(imageUrl, baseUrl).toString()
-                          console.log('Full image URL:', fullImageUrl)
-                        }
-                      } catch (error) {
-                        console.error('Invalid image URL:', imageUrl, error)
-                      }
-
                       return (
                         <div key={image.id} className="relative">
                           <Image
-                            src={fullImageUrl}
+                            src={buildImageUrl(image.imageUrl)}
                             alt={`${product.name} ${image.sortOrder}`}
                             width={200}
                             height={200}
