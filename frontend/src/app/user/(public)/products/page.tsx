@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select'
 import { useCart } from '@/context/CartContext'
 import { getProducts } from '@/lib/api/user/products'
+import { buildImageUrl } from '@/lib/utils'
 import type { ProductResponse } from '@/types/user/product'
 import { getCookie } from 'cookies-next'
 import {
@@ -270,36 +271,29 @@ export default function ProductListPage() {
               className="group hover:shadow-lg transition-all duration-300 overflow-hidden"
             >
               <div className="relative">
-                {product.productImages.length > 0 && (
-                  <div className="relative overflow-hidden">
-                    <Image
-                      src={
-                        product.productImages.sort((a, b) => a.sortOrder - b.sortOrder)[0]
-                          ?.imageUrl ||
-                        '/placeholder.svg' ||
-                        '/placeholder.svg'
-                      }
-                      alt={product.name}
-                      width={400}
-                      height={300}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                <div className="relative overflow-hidden">
+                  <Image
+                    src={buildImageUrl(product.productImages[0]?.imageUrl)}
+                    alt={product.name}
+                    width={400}
+                    height={300}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
 
-                    {/* バッジ */}
-                    <div className="absolute top-3 left-3 flex flex-col gap-2">
-                      {product.stock === 0 && <Badge variant="secondary">売り切れ</Badge>}
-                    </div>
-
-                    {/* お気に入りボタン */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-3 right-3 bg-white/80 hover:bg-white"
-                    >
-                      <Heart className="w-4 h-4" />
-                    </Button>
+                  {/* バッジ */}
+                  <div className="absolute top-3 left-3 flex flex-col gap-2">
+                    {product.stock === 0 && <Badge variant="secondary">売り切れ</Badge>}
                   </div>
-                )}
+
+                  {/* お気に入りボタン */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-3 right-3 bg-white/80 hover:bg-white"
+                  >
+                    <Heart className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
 
               <CardContent className="p-4">

@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCart } from '@/context/CartContext'
 import { getProductById } from '@/lib/api/user/products'
+import { buildImageUrl } from '@/lib/utils'
 import type { ProductResponse } from '@/types/user/product'
 import { getCookie } from 'cookies-next'
 import {
@@ -157,10 +158,7 @@ export default function ProductDetailPage() {
           <div className="space-y-4">
             <div className="relative">
               <Image
-                src={
-                  sortedImages[selectedImageIndex]?.imageUrl ||
-                  '/placeholder.svg?height=500&width=500'
-                }
+                src={buildImageUrl(product.productImages[selectedImageIndex]?.imageUrl)}
                 alt={product.name}
                 width={500}
                 height={500}
@@ -180,7 +178,7 @@ export default function ProductDetailPage() {
                     }`}
                   >
                     <Image
-                      src={image.imageUrl || '/placeholder.svg'}
+                      src={buildImageUrl(image.imageUrl)}
                       alt={`${product.name} ${index + 1}`}
                       width={80}
                       height={80}
