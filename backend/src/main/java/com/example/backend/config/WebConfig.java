@@ -14,12 +14,15 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true); // Cookieなど必要なら
+                .allowCredentials(true);
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // カレントディレクトリ（Spring Boot起動のディレクトリ）を取得
+        String currentDir = System.getProperty("user.dir");
+        // uploadsフォルダへのマッピング
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("classpath:/static/uploads/");
+                .addResourceLocations("file:" + currentDir + "/uploads/");
     }
 }

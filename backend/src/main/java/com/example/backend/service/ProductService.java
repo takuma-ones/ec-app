@@ -29,7 +29,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final EntityManager entityManager;
 
-    private final String uploadDir = "src/main/resources/static/uploads/images/products";
+    private final String uploadDir = "uploads/images/products";
 
     // 全取得（isDeleted = false のみ）
     public List<ProductEntity> findAll() {

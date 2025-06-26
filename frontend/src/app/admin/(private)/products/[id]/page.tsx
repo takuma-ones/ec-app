@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import ImageUploader, { ImageItem } from '@/components/ui/ImageUploader'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
@@ -31,6 +32,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function AdminProductDetailPage() {
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
   const params = useParams()
   const router = useRouter()
   const [product, setProduct] = useState<ProductResponse | null>(null)
@@ -39,6 +41,7 @@ export default function AdminProductDetailPage() {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [images, setImages] = useState<ImageItem[]>([])
   const [formData, setFormData] = useState<ProductRequest>({
     name: '',
     description: '',
@@ -75,7 +78,7 @@ export default function AdminProductDetailPage() {
           isPublished: productData.published,
           categoryIds: productData.productCategories.map((cat) => cat.id),
           images: productData.productImages.map((img) => ({
-            url: img.imageUrl,
+            base64: img.imageUrl,
             sortOrder: img.sortOrder,
           })),
         })
@@ -89,6 +92,16 @@ export default function AdminProductDetailPage() {
 
     fetchData()
   }, [params.id, router])
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      images: images.map((img, index) => ({
+        sortOrder: index + 1,
+        base64: img.base64,
+      })),
+    }))
+  }, [images])
 
   const handleSave = async () => {
     if (!product) return
@@ -129,7 +142,7 @@ export default function AdminProductDetailPage() {
         isPublished: product.published,
         categoryIds: product.productCategories.map((cat) => cat.id),
         images: product.productImages.map((img) => ({
-          url: img.imageUrl,
+          base64: img.imageUrl,
           sortOrder: img.sortOrder,
         })),
       })
@@ -201,7 +214,7 @@ export default function AdminProductDetailPage() {
       {/* ヘッダー */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <BackButton variant="custom" customPath="/admin/dashboard" />
+          <BackButton variant="custom" customPath="/admin/products" />
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
               <Package className="w-8 h-8 text-purple-500" />
@@ -274,13 +287,30 @@ export default function AdminProductDetailPage() {
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
                   {product.productImages.length > 0 ? (
-                    <Image
-                      src={product.productImages[0].imageUrl || '/placeholder.svg'}
-                      alt={product.name}
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-cover"
-                    />
+                    (() => {
+                      const imageUrl = product.productImages?.[0]?.imageUrl
+                      let fullImageUrl = '/placeholder.svg'
+
+                      try {
+                        if (imageUrl) {
+                          fullImageUrl = new URL(imageUrl, baseUrl).toString()
+                          console.log('Full image URL:', fullImageUrl)
+                        }
+                      } catch (error) {
+                        console.error('Invalid image URL:', imageUrl, error)
+                      }
+
+                      return (
+                        <Image
+                          src={fullImageUrl}
+                          alt={product.name}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                          unoptimized
+                        />
+                      )
+                    })()
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Package className="w-8 h-8 text-gray-400" />
@@ -444,28 +474,50 @@ export default function AdminProductDetailPage() {
               <CardDescription>商品の画像を管理します</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {product.productImages.map((image) => (
-                  <div key={image.id} className="relative">
-                    <Image
-                      src={image.imageUrl || '/placeholder.svg'}
-                      alt={`${product.name} ${image.sortOrder}`}
-                      width={200}
-                      height={200}
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
-                    <Badge className="absolute top-2 left-2" variant="secondary">
-                      {image.sortOrder}
-                    </Badge>
-                  </div>
-                ))}
-                {product.productImages.length === 0 && (
-                  <div className="col-span-full text-center py-8 text-gray-500">
-                    <Package className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                    <p>画像が登録されていません</p>
-                  </div>
-                )}
-              </div>
+              {isEditing ? (
+                <ImageUploader value={images} onChange={setImages} />
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {product.productImages
+                    .slice() // 元の配列を破壊しない
+                    .sort((a, b) => a.sortOrder - b.sortOrder) // sortOrder 昇順
+                    .map((image) => {
+                      const imageUrl = image.imageUrl
+                      let fullImageUrl = '/placeholder.svg'
+
+                      try {
+                        if (imageUrl) {
+                          fullImageUrl = new URL(imageUrl, baseUrl).toString()
+                          console.log('Full image URL:', fullImageUrl)
+                        }
+                      } catch (error) {
+                        console.error('Invalid image URL:', imageUrl, error)
+                      }
+
+                      return (
+                        <div key={image.id} className="relative">
+                          <Image
+                            src={fullImageUrl}
+                            alt={`${product.name} ${image.sortOrder}`}
+                            width={200}
+                            height={200}
+                            className="w-full h-32 object-cover rounded-lg"
+                          />
+                          <Badge className="absolute top-2 left-2" variant="secondary">
+                            {image.sortOrder}
+                          </Badge>
+                        </div>
+                      )
+                    })}
+
+                  {product.productImages.length === 0 && (
+                    <div className="col-span-full text-center py-8 text-gray-500">
+                      <Package className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                      <p>画像が登録されていません</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
