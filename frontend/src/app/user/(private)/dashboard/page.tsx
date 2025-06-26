@@ -10,6 +10,7 @@ import { getOrders } from '@/lib/api/user/orders'
 import { getProfile } from '@/lib/api/user/profile'
 import type { CartResponse } from '@/types/user/cart'
 import type { OrderResponse } from '@/types/user/order'
+import { buildImageUrl } from '@/lib/utils'
 import {
   ArrowRight,
   Bell,
@@ -316,11 +317,7 @@ export default function UserDashboardPage() {
                       >
                         <div className="w-12 h-12 rounded overflow-hidden bg-white">
                           <Image
-                            src={
-                              item.product.productImages.length > 0
-                                ? item.product.productImages[0].imageUrl || '/placeholder.svg'
-                                : '/placeholder.svg?height=48&width=48'
-                            }
+                            src={buildImageUrl(item.product.productImages[0].imageUrl)}
                             alt={item.product.name}
                             width={48}
                             height={48}

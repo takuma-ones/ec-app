@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { getCart } from '@/lib/api/user/carts'
 import { createOrder } from '@/lib/api/user/orders'
+import { buildImageUrl } from '@/lib/utils'
 import type { CartResponse } from '@/types/user/cart'
 import type { CheckoutRequest } from '@/types/user/order'
 import { CreditCard, MapPin } from 'lucide-react'
@@ -92,20 +93,6 @@ export default function CheckoutPage() {
   const getTotalAmount = () => {
     if (!cart) return 0
     return cart.totalPrice + getShippingFee() + getTax()
-  }
-
-  const getMainImage = (item: any) => {
-    if (!item.product?.productImages || item.product.productImages.length === 0) {
-      return '/placeholder.svg?height=48&width=48'
-    }
-
-    const sortedImages = item.product.productImages
-      .filter((img: any) => img?.imageUrl)
-      .sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0))
-
-    return sortedImages.length > 0
-      ? sortedImages[0].imageUrl
-      : '/placeholder.svg?height=48&width=48'
   }
 
   if (isLoading) {
@@ -192,12 +179,13 @@ export default function CheckoutPage() {
                       <div key={item.id} className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded overflow-hidden bg-gray-100">
                           <Image
-                            src={getMainImage(item) || '/placeholder.svg'}
+                            src={buildImageUrl(item.product.productImages[0]?.imageUrl)}
                             alt={item.product?.name || '商品'}
                             width={48}
                             height={48}
                             className="w-full h-full object-cover"
                           />
+                          <p>{item.product.productImages[0]?.sortOrder}</p>
                         </div>
                         <div className="flex-1">
                           <p className="font-medium text-sm">

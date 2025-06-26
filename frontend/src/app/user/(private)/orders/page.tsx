@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { getOrders } from '@/lib/api/user/orders'
+import { buildImageUrl } from '@/lib/utils'
 import type { OrderResponse } from '@/types/user/order'
 import { Calendar, Eye, MapPin, Package } from 'lucide-react'
 import Image from 'next/image'
@@ -156,11 +157,7 @@ export default function OrderHistoryPage() {
                           >
                             <div className="w-16 h-16 rounded overflow-hidden bg-white">
                               <Image
-                                src={
-                                  item.product.productImages.length > 0
-                                    ? item.product.productImages[0].imageUrl
-                                    : '/placeholder.svg?height=64&width=64'
-                                }
+                                src={buildImageUrl(item.product.productImages[0].imageUrl)}
                                 alt={item.product.name}
                                 width={64}
                                 height={64}

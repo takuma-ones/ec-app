@@ -1,28 +1,29 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import { getOrderById } from '@/lib/api/user/orders'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { BackButton } from '@/components/ui/back-button'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { getOrderById } from '@/lib/api/user/orders'
+import { buildImageUrl } from '@/lib/utils'
+import type { OrderResponse } from '@/types/user/order'
 import {
+  AlertCircle,
   ArrowLeft,
-  Package,
   Calendar,
-  MapPin,
   CheckCircle,
   Clock,
-  AlertCircle,
-  Truck,
   Mail,
+  MapPin,
+  Package,
+  Truck,
 } from 'lucide-react'
-import type { OrderResponse } from '@/types/user/order'
-import { BackButton } from '@/components/ui/back-button'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useParams, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function OrderDetailPage() {
   const params = useParams()
@@ -228,11 +229,7 @@ export default function OrderDetailPage() {
                       <div className="flex items-center gap-4">
                         <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
                           <Image
-                            src={
-                              item.product.productImages.length > 0
-                                ? item.product.productImages[0].imageUrl
-                                : '/placeholder.svg?height=80&width=80'
-                            }
+                            src={buildImageUrl(item.product.productImages[0].imageUrl)}
                             alt={item.product.name}
                             width={80}
                             height={80}
