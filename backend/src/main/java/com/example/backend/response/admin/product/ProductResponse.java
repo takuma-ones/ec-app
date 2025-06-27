@@ -16,8 +16,7 @@ public record ProductResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         List<ProductImageResponse> productImages,
-        List<ProductCategoryResponse> productCategories
-) {
+        List<ProductCategoryResponse> productCategories) {
     public static ProductResponse fromEntity(ProductEntity product) {
         return new ProductResponse(
                 product.getId(),
@@ -30,11 +29,12 @@ public record ProductResponse(
                 product.getCreatedAt(),
                 product.getUpdatedAt(),
                 product.getProductImages().stream()
+                        .filter(image -> !image.getIsDeleted())
                         .map(ProductImageResponse::fromEntity)
                         .toList(),
                 product.getProductCategories().stream()
+                        .filter(pc -> !pc.getCategory().getIsDeleted())
                         .map(ProductCategoryResponse::fromEntity)
-                        .toList()
-        );
+                        .toList());
     }
 }
