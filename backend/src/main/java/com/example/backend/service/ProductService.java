@@ -1,5 +1,17 @@
 package com.example.backend.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.backend.entity.CategoryEntity;
 import com.example.backend.entity.ProductCategoryEntity;
 import com.example.backend.entity.ProductEntity;
@@ -7,19 +19,9 @@ import com.example.backend.entity.ProductImageEntity;
 import com.example.backend.repository.ProductRepository;
 import com.example.backend.request.admin.product.ProductImageRequest;
 import com.example.backend.request.admin.product.ProductRequest;
+
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,14 +33,29 @@ public class ProductService {
 
     private final String uploadDir = "uploads/images/products";
 
-    // 全取得（isDeleted = false のみ）
-    public List<ProductEntity> findAll() {
+    // 全取得
+    // Admin向け：削除済みは表示しない（isDeleted = false のみ）
+    public List<ProductEntity> findAllForAdmin() {
         return productRepository.findAllByIsDeletedFalse(Sort.by("id"));
     }
 
-    // ID取得（isDeleted = false のみ）
-    public ProductEntity findById(Integer id) {
+    // 全取得
+    // User向け：削除済みと下書きは表示しない（isDeleted = false かつ isPublished = true）
+    public List<ProductEntity> findAllForUser() {
+        return productRepository.findAllByIsDeletedFalseAndIsPublishedTrue(Sort.by("id"));
+    }
+
+    // ID取得
+    // Admin向け：削除済みは表示しない（isDeleted = false のみ）
+    public ProductEntity findByIdForAdmin(Integer id) {
         return productRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    }
+
+    // ID取得
+    // User向け：削除済みと下書きは表示しない（isDeleted = false かつ isPublished = true）
+    public ProductEntity findByIdForUser(Integer id) {
+        return productRepository.findByIdAndIsDeletedFalseAndIsPublishedTrue(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
 

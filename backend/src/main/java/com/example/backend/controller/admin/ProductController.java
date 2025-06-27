@@ -1,20 +1,26 @@
 package com.example.backend.controller.admin;
 
-import com.example.backend.entity.CategoryEntity;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.backend.entity.ProductEntity;
-import com.example.backend.request.admin.category.CategoryRequest;
 import com.example.backend.request.admin.product.ProductRequest;
-import com.example.backend.response.admin.category.CategoryResponse;
 import com.example.backend.response.admin.product.ProductDetailResponse;
 import com.example.backend.response.admin.product.ProductResponse;
 import com.example.backend.service.ProductService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController("AdminProductController")
 @RequestMapping("/api/admin/products")
@@ -26,7 +32,7 @@ public class ProductController {
     // 一覧取得
     @GetMapping
     public List<ProductResponse> list() {
-        return productService.findAll()
+        return productService.findAllForAdmin()
                 .stream()
                 .map(ProductResponse::fromEntity)
                 .toList();
@@ -35,7 +41,7 @@ public class ProductController {
     // 1件取得
     @GetMapping("/{id}")
     public ProductDetailResponse get(@PathVariable Integer id) {
-        return ProductDetailResponse.fromEntity(productService.findById(id));
+        return ProductDetailResponse.fromEntity(productService.findByIdForAdmin(id));
     }
 
     // 登録（作成）
