@@ -2,9 +2,12 @@
 package com.example.backend.response.user.product;
 
 import com.example.backend.entity.ProductEntity;
+import com.example.backend.entity.ProductImageEntity;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record ProductResponse(
         Integer id,
@@ -31,8 +34,10 @@ public record ProductResponse(
                 product.getUpdatedAt(),
                 product.getProductImages().stream()
                         .filter(image -> !image.getIsDeleted())
+                        .sorted(Comparator.comparing(ProductImageEntity::getSortOrder))
                         .map(ProductImageResponse::fromEntity)
                         .toList(),
+
                 product.getProductCategories().stream()
                         .filter(pc -> !pc.getCategory().getIsDeleted())
                         .map(ProductCategoryResponse::fromEntity)

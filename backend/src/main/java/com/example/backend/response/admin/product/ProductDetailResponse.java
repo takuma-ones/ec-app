@@ -3,6 +3,7 @@ package com.example.backend.response.admin.product;
 import com.example.backend.entity.ProductEntity;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 public record ProductDetailResponse(
@@ -16,8 +17,7 @@ public record ProductDetailResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         List<ProductImageResponse> productImages,
-        List<ProductCategoryResponse> productCategories
-) {
+        List<ProductCategoryResponse> productCategories) {
     public static ProductDetailResponse fromEntity(ProductEntity product) {
         return new ProductDetailResponse(
                 product.getId(),
@@ -30,11 +30,14 @@ public record ProductDetailResponse(
                 product.getCreatedAt(),
                 product.getUpdatedAt(),
                 product.getProductImages().stream()
+                        .filter(image -> !image.getIsDeleted())
+                        .sorted(Comparator.comparing(image -> image.getSortOrder()))
                         .map(ProductImageResponse::fromEntity)
                         .toList(),
                 product.getProductCategories().stream()
+                        .filter(pc -> !pc.getCategory().getIsDeleted())
+                        .sorted(Comparator.comparing(pc -> pc.getCategory().getId()))
                         .map(ProductCategoryResponse::fromEntity)
-                        .toList()
-        );
+                        .toList());
     }
 }

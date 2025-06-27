@@ -1,7 +1,7 @@
-package com.example.backend.response.user.order;
+package com.example.backend.response.admin.order;
 
 import com.example.backend.entity.OrderItemEntity;
-import com.example.backend.response.user.product.ProductResponse;
+import com.example.backend.response.admin.product.ProductResponse;
 
 public record OrderItemResponse(
         Integer id,

@@ -3,7 +3,9 @@ package com.example.backend.response.admin.product;
 
 import com.example.backend.entity.ProductEntity;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record ProductResponse(
         Integer id,
@@ -30,10 +32,12 @@ public record ProductResponse(
                 product.getUpdatedAt(),
                 product.getProductImages().stream()
                         .filter(image -> !image.getIsDeleted())
+                        .sorted(Comparator.comparing(image -> image.getSortOrder()))
                         .map(ProductImageResponse::fromEntity)
-                        .toList(),
+                        .collect(Collectors.toList()),
                 product.getProductCategories().stream()
                         .filter(pc -> !pc.getCategory().getIsDeleted())
+                        .sorted(Comparator.comparing(pc -> pc.getCategory().getId()))
                         .map(ProductCategoryResponse::fromEntity)
                         .toList());
     }
