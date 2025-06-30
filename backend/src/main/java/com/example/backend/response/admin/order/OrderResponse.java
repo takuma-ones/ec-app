@@ -11,9 +11,11 @@ import com.example.backend.entity.OrderItemEntity;
 public record OrderResponse(
         Integer id,
         Integer userId,
+        String userName,
         Integer totalAmount,
         String status,
         String shippingAddress,
+        String phone,
         LocalDateTime createdAt,
         List<OrderItemResponse> items) {
     public static OrderResponse fromEntity(OrderEntity order) {
@@ -26,9 +28,11 @@ public record OrderResponse(
         return new OrderResponse(
                 order.getId(),
                 order.getUser().getId(),
+                order.getUser().getName(),
                 order.getTotalAmount(),
                 order.getStatus().name(),
                 order.getShippingAddress(),
+                order.getUser().getPhone(),
                 order.getCreatedAt(),
                 items);
     }

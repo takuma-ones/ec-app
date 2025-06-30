@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +34,32 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
-    // 全取得
+    // 全件取得
+    public List<OrderEntity> findAll() {
+        return orderRepository.findAll(Sort.by("createdAt").descending());
+    }
+
+    // ユーザーごと注文一覧
     public List<OrderEntity> findOrdersByUserId(Integer userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return orderRepository.findByUserOrderByCreatedAtDesc(user);
+    }
+
+    // 注文詳細（User用）
+    public OrderEntity findOrderByIdAndUserId(Integer orderId, Integer userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        return orderRepository.findByIdAndUser(orderId, user)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Order not found with id: " + orderId + " for user: " + userId));
+    }
+
+    // 注文詳細（Admin用）
+    public OrderEntity findOrderById(Integer orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + orderId));
     }
 
     // 決済
@@ -99,14 +121,5 @@ public class OrderService {
 
         // 9. OrderResponse作成して返す
         return OrderResponse.fromEntity(order);
-    }
-
-    public OrderEntity findOrderByIdAndUserId(Integer orderId, Integer userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-
-        return orderRepository.findByIdAndUser(orderId, user)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Order not found with id: " + orderId + " for user: " + userId));
     }
 }
