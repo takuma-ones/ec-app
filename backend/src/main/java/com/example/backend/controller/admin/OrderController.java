@@ -3,6 +3,8 @@ package com.example.backend.controller.admin;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.backend.request.admin.order.OrderRequest;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.backend.entity.OrderEntity;
@@ -34,4 +36,11 @@ public class OrderController {
         OrderEntity order = orderService.findOrderById(id);
         return OrderResponse.fromEntity(order);
     }
+
+    @PutMapping("/{id}")
+    public OrderResponse update(@PathVariable Integer id, @RequestBody @Validated OrderRequest request) {
+        OrderEntity order = orderService.updateOrderStatus(id, request);
+        return OrderResponse.fromEntity(order);
+    }
+
 }

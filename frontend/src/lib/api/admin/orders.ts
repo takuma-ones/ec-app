@@ -3,6 +3,7 @@
 import axios from '@/lib/axios'
 import { getCookie } from 'cookies-next'
 import { OrderResponse } from '@/types/admin/order'
+import { UpdateOrderStatusRequest } from '@/types/admin/order/request'
 
 const getAuthHeader = () => {
   const token = getCookie('admin-token')
@@ -23,4 +24,12 @@ export const getOrder = async (id: number): Promise<OrderResponse> => {
   return response.data
 }
 
-export const updateOrderStatus = console.log()
+export const updateOrderStatus = async (
+  id: number,
+  data: UpdateOrderStatusRequest
+): Promise<OrderResponse> => {
+  const response = await axios.put<OrderResponse>(`/admin/orders/${id}`, data, {
+    headers: getAuthHeader(),
+  })
+  return response.data
+}

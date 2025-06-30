@@ -4,12 +4,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.example.backend.request.user.order.OrderCreateRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.backend.entity.CartEntity;
 import com.example.backend.entity.CartItemEntity;
+import com.example.backend.entity.CategoryEntity;
 import com.example.backend.entity.OrderEntity;
 import com.example.backend.entity.OrderItemEntity;
 import com.example.backend.entity.UserEntity;
@@ -18,7 +20,7 @@ import com.example.backend.repository.CartItemRepository;
 import com.example.backend.repository.CartRepository;
 import com.example.backend.repository.OrderRepository;
 import com.example.backend.repository.UserRepository;
-import com.example.backend.request.user.order.OrderCreateRequest;
+import com.example.backend.request.admin.order.OrderRequest;
 import com.example.backend.response.user.order.OrderResponse;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -122,4 +124,14 @@ public class OrderService {
         // 9. OrderResponse作成して返す
         return OrderResponse.fromEntity(order);
     }
+
+    // 注文ステータス変更
+    public OrderEntity updateOrderStatus(Integer id, OrderRequest request) {
+        OrderEntity order = orderRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+        order.setStatus(OrderStatus.valueOf(request.status()));
+
+        return orderRepository.save(order);
+    }
+
 }
