@@ -1,16 +1,15 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getCategories } from '@/lib/api/admin/categories'
+import { getOrderCountByStatus } from '@/lib/api/admin/orders'
 import { getProducts } from '@/lib/api/admin/products'
 import { getUsers } from '@/lib/api/admin/users'
 import {
   Activity,
   ArrowUpRight,
   Calendar,
-  Eye,
   FolderOpen,
   Package,
   Plus,
@@ -42,6 +41,7 @@ export default function AdminDashboardPage() {
   const [userCount, setUserCount] = useState(0)
   const [productCount, setProductCount] = useState(0)
   const [categoryCount, setCategoryCount] = useState(0)
+  const [pendingOrderCount, setPendingOrderCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -50,9 +50,11 @@ export default function AdminDashboardPage() {
         const fetchedUser = await getUsers()
         const fetchedProducts = await getProducts()
         const fetchedCategories = await getCategories()
+        const ferchedPendingOrders = await getOrderCountByStatus('PAID')
         setUserCount(fetchedUser.length)
         setProductCount(fetchedProducts.length)
         setCategoryCount(fetchedCategories.length)
+        setPendingOrderCount(ferchedPendingOrders)
         setIsLoading(false)
       } catch (error) {
         console.error('取得エラー:', error)
@@ -153,7 +155,7 @@ export default function AdminDashboardPage() {
               <ShoppingCart className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{staticData.pendingOrders}</div>
+              <div className="text-2xl font-bold text-gray-900">{pendingOrderCount}</div>
               <p className="text-xs flex items-center mt-1">処理待ち</p>
             </CardContent>
           </Card>
@@ -220,34 +222,6 @@ export default function AdminDashboardPage() {
                     </Button>
                   </Link>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 今日の注文状況 */}
-          <Card className="mt-4">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShoppingCart className="w-5 h-5" />
-                今日の注文
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">新規注文</span>
-                  <Badge variant="default">{staticData.todayOrders}</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">処理待ち</span>
-                  <Badge variant="secondary">{staticData.pendingOrders}</Badge>
-                </div>
-                <Link href="/admin/orders">
-                  <Button variant="outline" size="sm" className="w-full mt-3">
-                    <Eye className="w-4 h-4 mr-2" />
-                    注文一覧を見る
-                  </Button>
-                </Link>
               </div>
             </CardContent>
           </Card>

@@ -1,8 +1,10 @@
 package com.example.backend.controller.admin;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.backend.enums.OrderStatus;
 import com.example.backend.request.admin.order.OrderRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,13 @@ public class OrderController {
         return OrderResponse.fromEntity(order);
     }
 
+    // ステータスごとの件数取得
+    @GetMapping("/count/{status}")
+    public int countOrderByStatus(@PathVariable OrderStatus status) {
+        return orderService.countByStatus(status);
+    }
+
+    // ステータス更新
     @PutMapping("/{id}")
     public OrderResponse update(@PathVariable Integer id, @RequestBody @Validated OrderRequest request) {
         OrderEntity order = orderService.updateOrderStatus(id, request);

@@ -134,4 +134,9 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    // 各ステータスの件数を取得
+    public int countByStatus(OrderStatus status) {
+        return orderRepository.countByStatus(status);
+    }
+
 }
